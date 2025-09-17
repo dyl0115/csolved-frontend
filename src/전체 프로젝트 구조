@@ -1,0 +1,112 @@
+src/
+├── main.js                     # 앱 진입점
+├── App.vue                     # 루트 컴포넌트
+├── router/                     # 라우팅 설정
+│   ├── index.js               # 라우터 메인
+│   ├── guards.js              # 라우터 가드
+│   └── routes/                # 라우트 설정 분리
+│       ├── auth.js            # 인증 관련 라우트
+│       ├── user.js            # 사용자 관련 라우트
+│       └── admin.js           # 관리자 관련 라우트
+│
+├── store/                      # Vuex 상태 관리
+│   ├── index.js               # 스토어 메인
+│   └── modules/               # 모듈별 스토어
+│       ├── auth.js            # 인증 상태
+│       ├── user.js            # 사용자 상태
+│       └── ui.js              # UI 상태 (로딩, 모달 등)
+│
+├── api/                        # API 통신
+│   ├── index.js               # axios 설정
+│   ├── auth.js                # 인증 API
+│   ├── user.js                # 사용자 API
+│   └── interceptors.js        # 요청/응답 인터셉터
+│
+├── views/                      # 페이지 컴포넌트 (라우터와 연결)
+│   ├── auth/                  # 인증 관련 페이지
+│   │   ├── Login.vue
+│   │   ├── SignUp.vue
+│   │   └── ForgotPassword.vue
+│   ├── user/                  # 사용자 관련 페이지
+│   │   ├── Profile.vue
+│   │   ├── Settings.vue
+│   │   └── Dashboard.vue
+│   └── admin/                 # 관리자 페이지
+│       ├── UserManagement.vue
+│       └── Statistics.vue
+│
+├── components/                 # 재사용 컴포넌트
+│   ├── common/                # 공통 컴포넌트
+│   │   ├── form/              # 폼 관련
+│   │   │   ├── InputField.vue
+│   │   │   ├── SelectField.vue
+│   │   │   ├── CheckboxField.vue
+│   │   │   └── FormButton.vue
+│   │   ├── layout/            # 레이아웃
+│   │   │   ├── Header.vue
+│   │   │   ├── Footer.vue
+│   │   │   ├── Sidebar.vue
+│   │   │   └── Navigation.vue
+│   │   ├── ui/                # UI 컴포넌트
+│   │   │   ├── Modal.vue
+│   │   │   ├── Loading.vue
+│   │   │   ├── Pagination.vue
+│   │   │   └── Toast.vue
+│   │   └── base/              # 기본 컴포넌트
+│   │       ├── BaseButton.vue
+│   │       ├── BaseCard.vue
+│   │       └── BaseTable.vue
+│   │
+│   ├── auth/                  # 인증 특화 컴포넌트
+│   │   ├── AuthLogo.vue
+│   │   ├── LoginForm.vue
+│   │   └── SignUpForm.vue
+│   │
+│   └── user/                  # 사용자 특화 컴포넌트
+│       ├── UserCard.vue
+│       ├── UserList.vue
+│       └── UserProfile.vue
+│
+├── composables/               # Vue 3 Composition API (옵션)
+│   ├── useAuth.js            # 인증 관련 로직
+│   ├── useApi.js             # API 호출 로직
+│   └── useValidation.js      # 폼 검증 로직
+│
+├── mixins/                    # Vue 2 믹스인 (필요시)
+│   ├── validationMixin.js
+│   └── authMixin.js
+│
+├── utils/                     # 유틸리티 함수
+│   ├── validation.js         # 검증 함수들
+│   ├── formatters.js         # 포맷팅 함수들
+│   ├── constants.js          # 상수들
+│   ├── helpers.js            # 도우미 함수들
+│   └── storage.js            # 로컬스토리지 관리
+│
+├── assets/                    # 정적 자산
+│   ├── styles/               # 스타일 파일
+│   │   ├── main.css         # 메인 스타일
+│   │   ├── variables.css    # CSS 변수
+│   │   ├── components/      # 컴포넌트별 스타일
+│   │   └── vendor/          # 서드파티 스타일
+│   ├── images/              # 이미지 파일
+│   ├── icons/               # 아이콘 파일
+│   └── fonts/               # 폰트 파일
+│
+├── plugins/                   # Vue 플러그인
+│   ├── axios.js             # axios 플러그인
+│   ├── toast.js             # 토스트 플러그인
+│   └── validators.js        # 검증 플러그인
+│
+├── directives/               # 커스텀 디렉티브
+│   ├── focus.js
+│   └── clickOutside.js
+│
+├── filters/                  # Vue 2 필터 (필요시)
+│   ├── date.js
+│   └── currency.js
+│
+└── config/                   # 설정 파일
+    ├── api.js               # API 설정
+    ├── constants.js         # 앱 상수
+    └── environment.js       # 환경별 설정
