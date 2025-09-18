@@ -69,7 +69,7 @@
 import { signUp } from '../../api/auth.js'
 import AuthLogo from '../../components/auth/AuthLogo.vue'
 import InputField from '../../components/common/DefaultInputField.vue'
-import LoadingButton from '../../components/auth/LoadingButton.vue'
+import LoadingButton from '../../components/common/LoadingButton.vue'
 import DefaultHeader from '../../components/common/DefaultHeader.vue'
 import DefaultFooter from '../../components/common/DefaultFooter.vue'
 

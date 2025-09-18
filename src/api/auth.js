@@ -19,12 +19,18 @@ export async function signUp(userData) {
 }
 
 // 로그인
-export async function signIn(credentials) {
-  try {
-    const response = await axios.post(`${API_BASE}/api/auth/login`, credentials)
-    return { success: true, data: response.data }
-    // eslint-disable-next-line no-unused-vars
-  } catch (error) {
-    return { success: false, message: '로그인 실패' }
+export async function signIn(userData) {
+  const response = await axios.post(`${API_BASE}/api/auth/signIn`, userData, {
+    withCredentials: true,
+  })
+
+  if (response.data.code === 'USER_NOT_FOUND') {
+    return { success: false, message: '등록되지 않은 이메일입니다.' }
   }
+
+  if (response.data.code === 'INVALID_PASSWORD') {
+    return { success: false, message: '비밀번호가 올바르지 않습니다.' }
+  }
+
+  return { success: true, data: response.data }
 }

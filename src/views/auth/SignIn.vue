@@ -47,7 +47,7 @@
             <!-- 회원가입 링크 -->
             <div class="text-center text-sm text-gray-600">
               아직 회원이 아니신가요?
-              <router-link to="/auth/signUp" class="text-blue-500 hover:text-blue-600">
+              <router-link to="/signup" class="text-blue-500 hover:text-blue-600">
                 회원가입
               </router-link>
             </div>
@@ -65,7 +65,7 @@ import AuthLogo from '../../components/auth/AuthLogo.vue'
 import InputField from '../../components/common/DefaultInputField.vue'
 import DefaultHeader from '../../components/common/DefaultHeader.vue'
 import DefaultFooter from '../../components/common/DefaultFooter.vue'
-import LoadingButton from '../../components/auth/LoadingButton.vue'
+import LoadingButton from '../../components/common/LoadingButton.vue'
 
 export default {
   name: 'SignIn',
@@ -116,14 +116,13 @@ export default {
           password: this.signInForm.password,
         })
 
-        if (result.sucess) {
-          localStorage.setItem('token', result.token)
-          this.$router.push('/')
+        if (result.success) {
+          this.$router.push('/home')
         } else {
-          this.globalErrors = [result.message || '로그인에 실패했습니다.']
+          this.globalErrors = [result.message]
         }
       } catch (error) {
-        this.globalErrors('로그인 에러', error)
+        this.globalErrors = [error.message || '로그인 중 오류가 발생했습니다.']
       } finally {
         this.loading = false
       }
