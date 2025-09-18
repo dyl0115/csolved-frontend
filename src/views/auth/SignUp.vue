@@ -1,4 +1,5 @@
 <template>
+  <DefaultHeader />
   <section class="bg-gray-100">
     <div class="min-h-screen flex items-center justify-center p-4">
       <div class="w-full max-w-md bg-white rounded-lg shadow-lg">
@@ -12,7 +13,7 @@
               label="이메일 주소"
               type="email"
               placeholder="사용할 이메일 주소"
-              v-model="form.email"
+              v-model="signUpForm.email"
               :error="errors.email"
             />
 
@@ -20,7 +21,7 @@
               label="닉네임"
               type="text"
               placeholder="커뮤니티에서 사용할 닉네임 (2-8자)"
-              v-model="form.nickname"
+              v-model="signUpForm.nickname"
               :error="errors.nickname"
             />
 
@@ -28,7 +29,7 @@
               label="비밀번호"
               type="password"
               placeholder="8자 이상, 영문/숫자/특수문자 조합"
-              v-model="form.password"
+              v-model="signUpForm.password"
               :error="errors.password"
             />
 
@@ -36,45 +37,55 @@
               label="비밀번호 확인"
               type="password"
               placeholder=""
-              v-model="form.passwordConfirm"
+              v-model="signUpForm.passwordConfirm"
               :error="errors.passwordConfirm"
             />
 
             <!-- 약관 동의 -->
             <div class="flex items-center gap-2 my-5">
-              <input type="checkbox" class="w-4 h-4" v-model="form.agreeTerms" />
+              <input type="checkbox" class="w-4 h-4" v-model="signUpForm.agreeTerms" />
               <label class="text-xs text-gray-600">
                 이용약관 및 개인정보처리방침에 동의합니다
               </label>
             </div>
 
-            <AuthButton type="submit" :loading="loading" :disabled="!isFormValid">
-              회원가입
-            </AuthButton>
+            <LoadingButton
+              type="submit"
+              text="회원가입"
+              loadingText="처리 중..."
+              :loading="loading"
+              :disabled="!isFormValid"
+            >
+            </LoadingButton>
           </form>
         </div>
       </div>
     </div>
   </section>
+  <DefaultFooter />
 </template>
 
 <script>
 import { signUp } from '../../api/auth.js'
 import AuthLogo from '../../components/auth/AuthLogo.vue'
 import InputField from '../../components/common/DefaultInputField.vue'
-import AuthButton from '../../components/auth/AuthButton.vue'
+import LoadingButton from '../../components/auth/LoadingButton.vue'
+import DefaultHeader from '../../components/common/DefaultHeader.vue'
+import DefaultFooter from '../../components/common/DefaultFooter.vue'
 
 export default {
   name: 'SignUp',
   components: {
     AuthLogo,
     InputField,
-    AuthButton,
+    LoadingButton,
+    DefaultHeader,
+    DefaultFooter,
   },
 
   data() {
     return {
-      form: {
+      signUpForm: {
         email: '',
         nickname: '',
         password: '',
@@ -89,11 +100,11 @@ export default {
   computed: {
     isFormValid() {
       return (
-        this.form.email &&
-        this.form.nickname &&
-        this.form.password &&
-        this.form.passwordConfirm &&
-        this.form.agreeTerms &&
+        this.signUpForm.email &&
+        this.signUpForm.nickname &&
+        this.signUpForm.password &&
+        this.signUpForm.passwordConfirm &&
+        this.signUpForm.agreeTerms &&
         Object.keys(this.errors).length === 0
       )
     },
@@ -101,16 +112,16 @@ export default {
 
   watch: {
     // 실시간 검증
-    'form.email'() {
+    'signUpForm.email'() {
       this.validateEmail()
     },
-    'form.nickname'() {
+    'signUpForm.nickname'() {
       this.validateNickname()
     },
-    'form.password'() {
+    'signUpForm.password'() {
       this.validatePassword()
     },
-    'form.passwordConfirm'() {
+    'signUpForm.passwordConfirm'() {
       this.validatePasswordConfirm()
     },
   },
@@ -123,16 +134,16 @@ export default {
 
       try {
         const result = await signUp({
-          email: this.form.email,
-          nickname: this.form.nickname,
-          password: this.form.password,
+          email: this.signUpForm.email,
+          nickname: this.signUpForm.nickname,
+          password: this.signUpForm.password,
         })
 
         if (result.success) {
           alert('회원가입이 완료되었습니다!')
-          this.$router.push('/login')
+          this.$router.push('/signin')
         } else {
-          alert('회원가입 실패: ' + result.message)
+          alert(result.message)
         }
         // eslint-disable-next-line no-unused-vars
       } catch (error) {
@@ -152,9 +163,9 @@ export default {
     },
 
     validateEmail() {
-      if (!this.form.email) {
+      if (!this.signUpForm.email) {
         this.errors.email = '이메일을 입력해주세요.'
-      } else if (!/\S+@\S+\.\S+/.test(this.form.email)) {
+      } else if (!/\S+@\S+\.\S+/.test(this.signUpForm.email)) {
         this.errors.email = '올바른 이메일 형식이 아닙니다.'
       } else {
         delete this.errors.email
@@ -162,9 +173,9 @@ export default {
     },
 
     validateNickname() {
-      if (!this.form.nickname) {
+      if (!this.signUpForm.nickname) {
         this.errors.nickname = '닉네임을 입력해주세요.'
-      } else if (this.form.nickname.length < 2 || this.form.nickname.length > 8) {
+      } else if (this.signUpForm.nickname.length < 2 || this.signUpForm.nickname.length > 8) {
         this.errors.nickname = '닉네임은 2-8자 사이여야 합니다.'
       } else {
         delete this.errors.nickname
@@ -173,9 +184,9 @@ export default {
 
     validatePassword() {
       const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
-      if (!this.form.password) {
+      if (!this.signUpForm.password) {
         this.errors.password = '비밀번호를 입력해주세요.'
-      } else if (!regex.test(this.form.password)) {
+      } else if (!regex.test(this.signUpForm.password)) {
         this.errors.password = '8자 이상, 영문/숫자/특수문자 조합이어야 합니다.'
       } else {
         delete this.errors.password
@@ -183,7 +194,7 @@ export default {
     },
 
     validatePasswordConfirm() {
-      if (this.form.password !== this.form.passwordConfirm) {
+      if (this.signUpForm.password !== this.signUpForm.passwordConfirm) {
         this.errors.passwordConfirm = '비밀번호가 일치하지 않습니다.'
       } else {
         delete this.errors.passwordConfirm

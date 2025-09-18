@@ -4,7 +4,7 @@
     <span v-if="loading" class="mr-2">⏳</span>
 
     <!-- 버튼 텍스트 -->
-    <span>{{ loading ? '처리 중...' : '회원가입' }}</span>
+    <span>{{ loading ? loadingText : text }}</span>
   </button>
 </template>
 
@@ -13,6 +13,8 @@ export default {
   name: 'AuthButton',
   props: {
     type: { type: String, default: 'button' },
+    text: { type: String, default: '확인' },
+    loadingText: { type: String, default: '처리 중...' },
     loading: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
   },

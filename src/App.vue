@@ -1,24 +1,24 @@
 <!-- <script setup></script> -->
 <template>
   <div id="app">
-    <DefaultHeader />
+    <!-- <DefaultHeader /> -->
     <main>
       <router-view />
       <!-- 페이지가 여기에 들어가요 -->
     </main>
-    <DefaultFooter />
+    <!-- <DefaultFooter /> -->
   </div>
 </template>
 
 <script>
-import DefaultHeader from './components/common/DefaultHeader.vue'
-import DefaultFooter from './components/common/DefaultFooter.vue'
+// import DefaultHeader from './components/common/DefaultHeader.vue'
+// import DefaultFooter from './components/common/DefaultFooter.vue'
 
 export default {
   name: 'App',
   components: {
-    DefaultHeader,
-    DefaultFooter,
+    // DefaultHeader,
+    // DefaultFooter,
   },
 }
 </script>
