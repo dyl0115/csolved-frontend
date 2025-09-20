@@ -20,6 +20,12 @@ export default defineConfig([
     },
   },
 
+  {
+    rules: {
+      'no-unused-vars': 'off', // 🚫 사용하지 않는 변수 규칙 끄기
+    },
+  },
+
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
   skipFormatting,
