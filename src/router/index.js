@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SignUp from '@/views/auth/SignUp.vue'
 import SignIn from '@/views/auth/SignIn.vue'
-import Communities from '@/views/community/communityList.vue'
+import Communities from '@/views/community/CommunityList.vue'
 import Test from '@/views/TestView.vue'
 
 const router = createRouter({

@@ -16,15 +16,15 @@ export default {
 </script>
 
 <style>
-/* Tailwind CSS 또는 기본 스타일 */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* App 전용 스타일 */
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-body {
-  font-family: 'Arial', sans-serif;
+main {
+  flex: 1;
 }
 </style>
 

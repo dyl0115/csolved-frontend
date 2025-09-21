@@ -22,7 +22,7 @@ export default defineConfig([
 
   {
     rules: {
-      'no-unused-vars': 'off', // 🚫 사용하지 않는 변수 규칙 끄기
+      'no-unused-vars': 'off',
     },
   },
 

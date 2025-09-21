@@ -63,8 +63,8 @@
 import { signIn } from '../../api/auth.js'
 import AuthLogo from '../../components/auth/AuthLogo.vue'
 import InputField from '../../components/common/DefaultInputField.vue'
-import DefaultHeader from '../../components/common/DefaultHeader.vue'
-import DefaultFooter from '../../components/common/DefaultFooter.vue'
+import DefaultHeader from '../../components/common/BasicHeader.vue'
+import DefaultFooter from '../../components/common/BasicFooter.vue'
 import LoadingButton from '../../components/common/LoadingButton.vue'
 
 export default {
