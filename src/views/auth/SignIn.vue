@@ -61,6 +61,7 @@
 
 <script>
 import { signIn } from '../../api/auth.js'
+import { useAuthStore } from '../../stores/auth.js'
 import AuthLogo from '../../components/auth/AuthLogo.vue'
 import InputField from '../../components/common/DefaultInputField.vue'
 import DefaultHeader from '../../components/common/BasicHeader.vue'
@@ -75,6 +76,11 @@ export default {
     DefaultFooter,
     InputField,
     LoadingButton,
+  },
+
+  setup() {
+    const authStore = useAuthStore()
+    return { authStore }
   },
 
   data() {
@@ -117,7 +123,8 @@ export default {
         })
 
         if (result.success) {
-          this.$router.push('/home')
+          this.authStore.login(result.data)
+          this.$router.push('/communities')
         } else {
           this.globalErrors = [result.message]
         }

@@ -1,11 +1,12 @@
 <template>
+  <UserHeader />
   <div>
     <!-- 게시판 배너 -->
     <BoardBanner
-      image-src="/assets/images/community-banner.svg"
-      alt-text="커뮤니티 게시판"
-      title="커뮤니티"
-      description="자유롭게 이야기를 나눠보세요"
+      :image-src="communityBannerImage"
+      alt-text=""
+      title=""
+      description=""
       variant="primary"
     />
 
@@ -73,6 +74,7 @@
       </div>
     </div>
   </div>
+  <UserFooter />
 </template>
 
 <script setup>
@@ -80,7 +82,12 @@ import { onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useBoard } from '@/composables/useBoard'
 
+// 이미지 경로
+const communityBannerImage = '/images/community-banner.svg'
+
 // 컴포넌트 imports
+import UserHeader from '@/components/common/UserHeader.vue'
+import UserFooter from '@/components/common/UserFooter.vue'
 import BoardBanner from '@/components/board/BoardBanner.vue'
 import EmptyBoard from '@/components/board/EmptyBoard.vue'
 import CreateButton from '@/components/board/CreateButton.vue'

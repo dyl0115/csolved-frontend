@@ -1,5 +1,5 @@
 <template>
-  <div :class="containerClass">
+  <div :class="containerClass" :style="backgroundImageStyle">
     <div :class="overlayClass">
       <div class="max-w-7xl mx-auto px-4 py-8 sm:py-12">
         <div class="text-center">
@@ -30,26 +30,26 @@ const props = defineProps({
   },
   title: {
     type: String,
-    default: ''
+    default: '',
   },
   description: {
     type: String,
-    default: ''
+    default: '',
   },
   height: {
     type: String,
     default: 'md',
-    validator: (value) => ['sm', 'md', 'lg', 'xl'].includes(value)
+    validator: (value) => ['sm', 'md', 'lg', 'xl'].includes(value),
   },
   variant: {
     type: String,
     default: 'primary',
-    validator: (value) => ['primary', 'secondary', 'gradient', 'dark'].includes(value)
+    validator: (value) => ['primary', 'secondary', 'gradient', 'dark'].includes(value),
   },
   overlay: {
     type: Boolean,
-    default: true
-  }
+    default: true,
+  },
 })
 
 // 컨테이너 클래스
@@ -60,32 +60,40 @@ const containerClass = computed(() => {
     sm: 'h-32 sm:h-40',
     md: 'h-48 sm:h-64',
     lg: 'h-64 sm:h-80',
-    xl: 'h-80 sm:h-96'
+    xl: 'h-80 sm:h-96',
   }
 
   const variants = {
     primary: 'bg-blue-600',
     secondary: 'bg-gray-600',
     gradient: 'bg-gradient-to-r from-purple-600 to-blue-600',
-    dark: 'bg-gray-900'
+    dark: 'bg-gray-900',
   }
 
   let classes = `${baseClass} ${heights[props.height]}`
 
-  if (props.imageSrc) {
-    classes += ` [background-image:url('${props.imageSrc}')]`
-  } else {
+  if (!props.imageSrc) {
     classes += ` ${variants[props.variant]}`
   }
 
   return classes
 })
 
+// 배경 이미지 스타일
+const backgroundImageStyle = computed(() => {
+  if (props.imageSrc) {
+    return {
+      backgroundImage: `url('${props.imageSrc}')`,
+    }
+  }
+  return {}
+})
+
 // 오버레이 클래스
 const overlayClass = computed(() => {
   if (!props.overlay) return 'h-full flex items-center'
 
-  return 'h-full flex items-center bg-black bg-opacity-40'
+  return 'h-full flex items-center bg-opacity-40'
 })
 
 // 제목 클래스

@@ -6,17 +6,23 @@ export const API_ENDPOINTS = {
     SIGN_UP: '/api/auth/signUp',
     SIGN_IN: '/api/auth/signIn',
     SIGN_OUT: '/api/auth/signOut',
-    REFRESH: '/api/auth/refresh'
+    WITHDRAW: '/api/auth/withdraw',
+    REFRESH: '/api/auth/refresh',
+    CHECK_SESSION: '/api/auth/session',
   },
   POSTS: {
     LIST: '/api/posts',
     DETAIL: '/api/posts',
     CREATE: '/api/posts',
     UPDATE: '/api/posts',
-    DELETE: '/api/posts'
+    DELETE: '/api/posts',
+  },
+  USER: {
+    ACTIVITY: '/api/users/activity',
+    PROFILE: '/api/users/profile',
   },
   COMMUNITIES: '/api/communities',
-  CATEGORIES: '/api/categories'
+  CATEGORIES: '/api/categories',
 }
 
 // 응답 코드 상수
@@ -25,14 +31,15 @@ export const RESPONSE_CODES = {
   DUPLICATE_EMAIL: 'DUPLICATE_EMAIL',
   DUPLICATE_NICKNAME: 'DUPLICATE_NICKNAME',
   USER_NOT_FOUND: 'USER_NOT_FOUND',
-  INVALID_PASSWORD: 'INVALID_PASSWORD'
+  INVALID_PASSWORD: 'INVALID_PASSWORD',
+  INVALID_SESSION: 'INVALID_SESSION',
 }
 
 // 페이지네이션 상수
 export const PAGINATION = {
   DEFAULT_PAGE_SIZE: 20,
   MAX_PAGE_SIZE: 100,
-  DEFAULT_PAGE: 1
+  DEFAULT_PAGE: 1,
 }
 
 // 정렬 옵션 상수
@@ -40,7 +47,7 @@ export const SORT_OPTIONS = {
   RECENT: 'recent',
   POPULAR: 'popular',
   VIEWS: 'views',
-  COMMENTS: 'comments'
+  COMMENTS: 'comments',
 }
 
 // 게시판 레이아웃 상수
@@ -48,14 +55,14 @@ export const LAYOUTS = {
   DEFAULT: 'default',
   COMPACT: 'compact',
   CARD: 'card',
-  TABLE: 'table'
+  TABLE: 'table',
 }
 
 // 컴포넌트 크기 상수
 export const SIZES = {
   SM: 'sm',
   MD: 'md',
-  LG: 'lg'
+  LG: 'lg',
 }
 
 // 컴포넌트 variants 상수
@@ -65,5 +72,5 @@ export const VARIANTS = {
   SECONDARY: 'secondary',
   SUCCESS: 'success',
   WARNING: 'warning',
-  DANGER: 'danger'
+  DANGER: 'danger',
 }
