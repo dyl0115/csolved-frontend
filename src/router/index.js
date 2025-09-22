@@ -34,6 +34,12 @@ router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.meta.requiresAuth !== false
 
   if (requiresAuth) {
+    // 이미 인증된 상태라면 서버 요청 없이 진행
+    if (authStore.isLoggedIn) {
+      next()
+      return
+    }
+
     const isAuthenticated = await authStore.checkAuth()
     if (!isAuthenticated) {
       next('/signin')

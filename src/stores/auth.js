@@ -9,7 +9,7 @@ export const useAuthStore = defineStore('auth', {
     isAuthenticated: false,
     user: null,
     sessionChecked: false,
-    broadcastChannel: null
+    broadcastChannel: null,
   }),
 
   actions: {
@@ -40,7 +40,7 @@ export const useAuthStore = defineStore('auth', {
       const data = {
         isAuthenticated: this.isAuthenticated,
         user: this.user,
-        sessionChecked: this.sessionChecked
+        sessionChecked: this.sessionChecked,
       }
       localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(data))
     },
@@ -74,8 +74,8 @@ export const useAuthStore = defineStore('auth', {
             data: {
               isAuthenticated: this.isAuthenticated,
               user: this.user ? JSON.parse(JSON.stringify(this.user)) : null,
-              sessionChecked: this.sessionChecked
-            }
+              sessionChecked: this.sessionChecked,
+            },
           })
         } catch (error) {
           console.warn('BroadcastChannel postMessage failed:', error)
@@ -117,7 +117,7 @@ export const useAuthStore = defineStore('auth', {
     },
 
     // 로그인 성공 시 호출
-    login(userData) {
+    async signIn(userData) {
       this.isAuthenticated = true
       this.user = userData
       this.sessionChecked = true
@@ -126,7 +126,17 @@ export const useAuthStore = defineStore('auth', {
     },
 
     // 로그아웃 시 호출
-    logout() {
+    async signOut() {
+      // 서버 요청 성공/실패와 관계없이 클라이언트 상태는 초기화
+      this.isAuthenticated = false
+      this.user = null
+      this.sessionChecked = false
+      this.clearStorage()
+      this.broadcastAuthUpdate()
+    },
+
+    // 회원탈퇴 시 호출
+    async withdraw() {
       this.isAuthenticated = false
       this.user = null
       this.sessionChecked = false
@@ -141,10 +151,10 @@ export const useAuthStore = defineStore('auth', {
       this.sessionChecked = false
       this.saveToStorage()
       this.broadcastAuthUpdate()
-    }
+    },
   },
 
   getters: {
-    isLoggedIn: (state) => state.isAuthenticated && state.sessionChecked
-  }
+    isLoggedIn: (state) => state.isAuthenticated && state.sessionChecked,
+  },
 })

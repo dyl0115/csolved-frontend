@@ -129,47 +129,61 @@
           >
             커뮤니티
           </router-link>
-          <router-link
-            to="/questions?page=1"
-            class="text-white hover:text-blue-200 transition-colors font-medium py-2"
-            @click="closeMobileMenu"
-          >
-            면접질문
-          </router-link>
-          <router-link
-            to="/code-reviews?page=1"
-            class="text-white hover:text-blue-200 transition-colors font-medium py-2"
-            @click="closeMobileMenu"
-          >
-            코드리뷰
-          </router-link>
-          <hr class="border-blue-500" />
-          <router-link
-            to="/users/profile"
-            class="text-white hover:text-blue-200 transition-colors font-medium py-2"
-            @click="closeMobileMenu"
-          >
-            내 프로필
-          </router-link>
-          <router-link
-            to="/users/activity?bookmarkPage=1&userPostPage=1&repliedPostPage=1"
-            class="text-white hover:text-blue-200 transition-colors font-medium py-2"
-            @click="closeMobileMenu"
-          >
-            내 활동
-          </router-link>
-          <button
-            @click="handleSignOut"
-            class="text-white hover:text-blue-200 transition-colors font-medium py-2 text-left"
-          >
-            로그아웃
-          </button>
-          <button
-            @click="openWithdrawModal"
-            class="text-red-300 hover:text-red-100 transition-colors font-medium py-2 text-left"
-          >
-            회원탈퇴
-          </button>
+
+          <!-- 모바일 내 정보 드롭다운 -->
+          <div class="relative" ref="mobileUserDropdown">
+            <button
+              @click="toggleMobileUserDropdown"
+              class="flex items-center justify-between w-full text-white hover:text-blue-200 transition-colors font-medium py-2"
+            >
+              <span>내 정보</span>
+              <svg
+                class="h-4 w-4 transform transition-transform duration-200"
+                :class="{ 'rotate-180': isMobileUserDropdownOpen }"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+
+            <!-- 모바일 드롭다운 박스 -->
+            <div
+              v-show="isMobileUserDropdownOpen"
+              class="mt-2 ml-4 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden animate-dropdown"
+            >
+              <router-link
+                to="/users/profile"
+                class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition-colors border-b border-gray-100"
+                @click="closeMobileMenu"
+              >
+                내 프로필
+              </router-link>
+              <router-link
+                to="/users/activity?bookmarkPage=1&userPostPage=1&repliedPostPage=1"
+                class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition-colors border-b border-gray-100"
+                @click="closeMobileMenu"
+              >
+                내 활동
+              </router-link>
+              <button
+                @click="handleSignOut"
+                class="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition-colors border-b border-gray-100"
+              >
+                로그아웃
+              </button>
+              <button
+                @click="openWithdrawModal"
+                class="block w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+              >
+                회원탈퇴
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -201,6 +215,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { signOut, withdraw } from '@/api/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -211,6 +226,10 @@ const userDropdown = ref(null)
 
 // 모바일 메뉴 상태
 const isMobileMenuOpen = ref(false)
+
+// 모바일 사용자 드롭다운 상태
+const isMobileUserDropdownOpen = ref(false)
+const mobileUserDropdown = ref(null)
 
 // 회원탈퇴 모달 상태
 const isWithdrawModalOpen = ref(false)
@@ -233,11 +252,26 @@ const closeDropdown = () => {
 // 모바일 메뉴 토글
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
+  // 모바일 메뉴가 닫힐 때 사용자 드롭다운도 닫기
+  if (!isMobileMenuOpen.value) {
+    isMobileUserDropdownOpen.value = false
+  }
 }
 
 // 모바일 메뉴 닫기
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false
+  isMobileUserDropdownOpen.value = false
+}
+
+// 모바일 사용자 드롭다운 토글
+const toggleMobileUserDropdown = () => {
+  isMobileUserDropdownOpen.value = !isMobileUserDropdownOpen.value
+}
+
+// 모바일 사용자 드롭다운 닫기
+const closeMobileUserDropdown = () => {
+  isMobileUserDropdownOpen.value = false
 }
 
 // 회원탈퇴 모달 열기
@@ -256,22 +290,27 @@ const closeWithdrawModal = () => {
 const handleSignOut = async () => {
   if (confirm('로그아웃 하시겠습니까?')) {
     try {
-      authStore.logout()
+      await signOut()
+      authStore.signOut()
+      closeDropdown()
+      closeMobileMenu()
       await router.push('/signin')
     } catch (error) {
       console.error('로그아웃 중 오류 발생:', error)
     }
+  } else {
+    closeDropdown()
+    closeMobileMenu()
   }
-  closeDropdown()
-  closeMobileMenu()
 }
 
 // 회원탈퇴 처리
 const handleWithdraw = async () => {
   try {
-    // 실제 회원탈퇴 API 호출 구현 필요
-    console.log('회원탈퇴 처리')
+    await withdraw()
+    authStore.withdraw()
     closeWithdrawModal()
+    await router.push('/signin')
   } catch (error) {
     console.error('회원탈퇴 중 오류 발생:', error)
   }
@@ -282,6 +321,9 @@ const handleClickOutside = (event) => {
   if (userDropdown.value && !userDropdown.value.contains(event.target)) {
     closeDropdown()
   }
+  if (mobileUserDropdown.value && !mobileUserDropdown.value.contains(event.target)) {
+    closeMobileUserDropdown()
+  }
 }
 
 // ESC 키 감지
@@ -289,6 +331,7 @@ const handleEscKey = (event) => {
   if (event.key === 'Escape') {
     closeDropdown()
     closeMobileMenu()
+    closeMobileUserDropdown()
     closeWithdrawModal()
   }
 }
@@ -305,5 +348,18 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Tailwind CSS 클래스를 사용하므로 추가 스타일링 불필요 */
+.animate-dropdown {
+  animation: dropdown-fade-in 0.2s ease-out;
+}
+
+@keyframes dropdown-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 </style>

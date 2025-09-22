@@ -63,7 +63,7 @@ export async function checkSession() {
 // 로그아웃
 export async function signOut() {
   try {
-    const response = await axios.delete(`${API_BASE_URL}${API_ENDPOINTS.AUTH.signOut}`)
+    const response = await axios.delete(`${API_BASE_URL}${API_ENDPOINTS.AUTH.SIGN_OUT}`)
     return { success: true, data: response.data }
   } catch (error) {
     return { success: false, message: '잠시후 다시 시도해 주세요. (' + error.message + ')' }

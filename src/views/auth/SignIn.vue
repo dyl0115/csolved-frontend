@@ -123,8 +123,8 @@ export default {
         })
 
         if (result.success) {
-          this.authStore.login(result.data)
-          this.$router.push('/communities')
+          await this.authStore.signIn(result.data)
+          await this.$router.push('/communities')
         } else {
           this.globalErrors = [result.message]
         }
