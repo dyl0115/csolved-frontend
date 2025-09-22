@@ -8,293 +8,51 @@
           <!-- 게시글 상세 -->
           <div class="bg-white rounded-lg shadow-lg mb-6">
             <div class="p-6">
-              <!-- 게시글 제목 -->
-              <h1 class="text-2xl font-bold text-gray-900 mb-4">{{ post.title }}</h1>
+              <PostHeader :title="post.title" :tags="post.tags" />
 
-              <!-- 태그 -->
-              <div class="mb-4" v-if="post.tags && post.tags.length > 0">
-                <span
-                  v-for="tag in post.tags"
-                  :key="tag.id"
-                  class="inline-block bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded-full mr-2 mb-2"
-                >
-                  {{ tag.name }}
-                </span>
-              </div>
-
-              <!-- 게시글 메타 정보 -->
-              <div class="flex flex-wrap items-center text-sm text-gray-600 mb-6">
-                <!-- 카테고리 -->
-                <div class="flex items-center mr-4 mb-2">
-                  <i class="bi bi-journal-text mr-1"></i>
-                  <span>{{ post.categoryName }}</span>
-                </div>
-
-                <!-- 작성자 -->
-                <div class="flex items-center mr-4 mb-2">
-                  <i class="bi bi-person mr-1"></i>
-                  <span>{{ post.anonymous ? '익명' : post.authorNickname }}</span>
-                </div>
-
-                <!-- 조회수 -->
-                <div class="flex items-center mr-4 mb-2">
-                  <i class="bi bi-eye mr-1"></i>
-                  <span>{{ post.views }}</span>
-                </div>
-
-                <!-- 작성시간 -->
-                <div class="flex items-center mr-4 mb-2">
-                  <i class="bi bi-clock mr-1"></i>
-                  <span>{{ formatTimeAgo(post.createdAt) }}</span>
-                </div>
-
-                <!-- 수정됨 -->
-                <div v-if="post.modifiedAt" class="flex items-center mr-4 mb-2">
-                  <i class="bi bi-pencil mr-1"></i>
-                  <span>수정됨</span>
-                </div>
-
-                <!-- 수정/삭제 버튼 -->
-                <div v-if="canEdit" class="flex items-center space-x-2 mb-2">
-                  <router-link
-                    :to="`/community/${post.id}/update`"
-                    class="text-blue-600 hover:text-blue-800 text-sm border border-blue-600 hover:border-blue-800 px-2 py-1 rounded"
-                  >
-                    수정
-                  </router-link>
-                  <button
-                    @click="handleDelete"
-                    class="text-red-600 hover:text-red-800 text-sm border border-red-600 hover:border-red-800 px-2 py-1 rounded"
-                  >
-                    삭제
-                  </button>
-                </div>
-              </div>
+              <PostMeta
+                :post-id="post.id"
+                :category-name="post.categoryName"
+                :author-nickname="post.authorNickname"
+                :anonymous="post.anonymous"
+                :views="post.views"
+                :formatted-created-at="formatTimeAgo(post.createdAt)"
+                :modified-at="post.modifiedAt"
+                :can-edit="canEdit"
+                @delete="handleDelete"
+              />
 
               <!-- 게시글 내용 -->
               <div class="prose max-w-none mb-6" v-html="post.content"></div>
             </div>
           </div>
 
-          <!-- 액션 버튼들 -->
-          <div class="flex space-x-4 mb-6">
-            <!-- 좋아요 버튼 -->
-            <button
-              @click="handleLike"
-              :disabled="isLikeLoading"
-              class="flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50"
-            >
-              <i class="bi bi-heart mr-2"></i>
-              좋아요
-              <span class="ml-2">{{ post.likes || 0 }}</span>
-            </button>
+          <PostActions
+            :likes="post.likes"
+            :bookmarked="bookmarked"
+            :is-like-loading="isLikeLoading"
+            :is-bookmark-loading="isBookmarkLoading"
+            @like="handleLike"
+            @toggle-answer="toggleAnswerForm"
+            @bookmark="handleBookmark"
+          />
 
-            <!-- 답변 달기 버튼 -->
-            <button
-              @click="toggleAnswerForm"
-              class="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              <i class="bi bi-chat-left-text-fill mr-2"></i>
-              답변 달기
-            </button>
-
-            <!-- 북마크 버튼 -->
-            <button
-              @click="handleBookmark"
-              :disabled="isBookmarkLoading"
-              class="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50"
-            >
-              <i
-                :class="bookmarked ? 'bi bi-bookmark-x-fill' : 'bi bi-bookmark-fill'"
-                class="mr-2"
-              ></i>
-              {{ bookmarked ? '북마크 취소' : '북마크' }}
-            </button>
-          </div>
-
-          <!-- 답변 작성 폼 -->
-          <div v-show="showAnswerForm" class="bg-white rounded-lg shadow mb-6">
-            <div class="p-6">
-              <form @submit.prevent="handleAnswerSubmit" class="space-y-4">
-                <textarea
-                  v-model="answerForm.content"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                  :class="{ 'border-red-500': answerErrors.content }"
-                  rows="4"
-                  placeholder="댓글을 달아 생각을 공유해 주세요!"
-                  required
-                ></textarea>
-                <p v-if="answerErrors.content" class="text-sm text-red-600">
-                  {{ answerErrors.content }}
-                </p>
-
-                <div class="flex justify-between items-center">
-                  <div class="flex items-center">
-                    <input
-                      v-model="answerForm.anonymous"
-                      type="checkbox"
-                      id="answer-anonymous"
-                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <label for="answer-anonymous" class="ml-2 text-sm text-gray-700">
-                      익명으로 댓글 달기
-                    </label>
-                  </div>
-                  <LoadingButton
-                    type="submit"
-                    :loading="isAnswerLoading"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  >
-                    등록
-                  </LoadingButton>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <!-- 답변 목록 -->
-          <div class="bg-white rounded-lg shadow">
-            <div class="p-6">
-              <!-- 답변이 없을 때 -->
-              <div v-if="answers.length === 0" class="text-center py-8">
-                <p class="text-gray-500">댓글이 비어있습니다. 첫 번째 댓글을 작성해보세요!</p>
-              </div>
-
-              <!-- 답변 목록 -->
-              <div v-else class="space-y-6">
-                <div
-                  v-for="answer in answers"
-                  :key="answer.id"
-                  class="border-b border-gray-200 pb-6 last:border-b-0"
-                >
-                  <div class="flex space-x-3">
-                    <!-- 프로필 이미지 -->
-                    <div class="flex-shrink-0">
-                      <img
-                        :src="
-                          answer.anonymous
-                            ? '/images/anonymous.jpg'
-                            : answer.authorProfileImage || '/images/default-profile.png'
-                        "
-                        :alt="answer.anonymous ? '익명' : answer.authorNickname"
-                        class="h-10 w-10 rounded-full object-cover"
-                      />
-                    </div>
-
-                    <!-- 답변 내용 -->
-                    <div class="flex-1 min-w-0">
-                      <div class="flex items-center space-x-2 mb-2">
-                        <h4 class="text-sm font-medium text-gray-900">
-                          {{ answer.anonymous ? '익명' : answer.authorNickname }}
-                        </h4>
-                        <span class="text-sm text-gray-500">{{
-                          formatTimeAgo(answer.createdAt)
-                        }}</span>
-                        <button
-                          v-if="answer.authorId === authStore.user?.id"
-                          @click="handleAnswerDelete(answer.id)"
-                          class="text-xs text-red-600 hover:text-red-800 border border-red-600 hover:border-red-800 px-2 py-0.5 rounded"
-                        >
-                          삭제
-                        </button>
-                      </div>
-                      <div class="prose text-sm max-w-none mb-3" v-html="answer.content"></div>
-
-                      <!-- 대댓글 쓰기 버튼 -->
-                      <button
-                        @click="toggleCommentForm(answer.id)"
-                        class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer"
-                      >
-                        댓글 쓰기
-                      </button>
-
-                      <!-- 대댓글 작성 폼 -->
-                      <div
-                        v-show="showCommentForm === answer.id"
-                        class="mt-4 bg-gray-50 rounded-lg p-4"
-                      >
-                        <form @submit.prevent="handleCommentSubmit(answer.id)" class="space-y-3">
-                          <textarea
-                            v-model="commentForms[answer.id]?.content || ''"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
-                            rows="3"
-                            placeholder="답변에 대한 댓글을 작성하세요!"
-                            required
-                          ></textarea>
-
-                          <div class="flex justify-between items-center">
-                            <div class="flex items-center">
-                              <input
-                                v-model="commentForms[answer.id]?.anonymous || false"
-                                type="checkbox"
-                                :id="`comment-anonymous-${answer.id}`"
-                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                              />
-                              <label
-                                :for="`comment-anonymous-${answer.id}`"
-                                class="ml-2 text-sm text-gray-700"
-                              >
-                                익명으로 댓글 달기
-                              </label>
-                            </div>
-                            <LoadingButton
-                              type="submit"
-                              :loading="isCommentLoading"
-                              class="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm"
-                            >
-                              등록
-                            </LoadingButton>
-                          </div>
-                        </form>
-                      </div>
-
-                      <!-- 대댓글 목록 -->
-                      <div
-                        v-if="answer.comments && answer.comments.length > 0"
-                        class="mt-4 space-y-3"
-                      >
-                        <div
-                          v-for="comment in answer.comments"
-                          :key="comment.id"
-                          class="flex space-x-3 ml-4"
-                        >
-                          <div class="flex-shrink-0">
-                            <img
-                              :src="
-                                comment.anonymous
-                                  ? '/images/anonymous.jpg'
-                                  : comment.authorProfileImage || '/images/default-profile.png'
-                              "
-                              :alt="comment.anonymous ? '익명' : comment.authorNickname"
-                              class="h-8 w-8 rounded-full object-cover"
-                            />
-                          </div>
-                          <div class="flex-1 min-w-0">
-                            <div class="flex items-center space-x-2 mb-1">
-                              <h5 class="text-sm font-medium text-gray-900">
-                                {{ comment.anonymous ? '익명' : comment.authorNickname }}
-                              </h5>
-                              <span class="text-xs text-gray-500">{{
-                                formatTimeAgo(comment.createdAt)
-                              }}</span>
-                              <button
-                                v-if="comment.authorId === authStore.user?.id"
-                                @click="handleCommentDelete(comment.id)"
-                                class="text-xs text-red-600 hover:text-red-800 border border-red-600 hover:border-red-800 px-1 py-0.5 rounded"
-                              >
-                                삭제
-                              </button>
-                            </div>
-                            <div class="prose text-sm max-w-none" v-html="comment.content"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <CommentSection
+            :comments="answers"
+            :current-user-id="authStore.user?.id"
+            :show-answer-form="showAnswerForm"
+            :answer-form="answerForm"
+            :answer-errors="answerErrors"
+            :is-answer-loading="isAnswerLoading"
+            :show-comment-form="showCommentForm"
+            :comment-forms="commentForms"
+            :is-comment-loading="isCommentLoading"
+            :format-time-ago="formatTimeAgo"
+            @submit-answer="handleAnswerSubmit"
+            @delete-comment="handleAnswerDelete"
+            @toggle-comment-form="toggleCommentForm"
+            @submit-comment="handleCommentSubmit"
+          />
         </div>
 
         <!-- 사이드바 -->
@@ -312,37 +70,26 @@
       </div>
     </div>
 
-    <!-- 삭제 확인 모달 -->
-    <div
-      v-show="showDeleteModal"
-      class="fixed inset-0 z-50 overflow-y-auto"
-      @click="closeDeleteModal"
-    >
-      <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="fixed inset-0 bg-black opacity-50"></div>
-        <div class="relative bg-white rounded-lg max-w-md w-full p-6" @click.stop>
-          <div class="text-center">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">게시글 삭제</h3>
-            <p class="text-gray-600 mb-6">정말 삭제하시겠습니까?</p>
-            <div class="flex space-x-4">
-              <button
-                @click="closeDeleteModal"
-                class="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50"
-              >
-                취소
-              </button>
-              <LoadingButton
-                @click="confirmDelete"
-                :loading="isDeleteLoading"
-                class="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-              >
-                삭제
-              </LoadingButton>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ConfirmModal
+      :show="showDeleteModal"
+      title="게시글 삭제"
+      message="정말 삭제하시겠습니까?"
+      confirm-text="삭제"
+      :is-loading="isDeleteLoading"
+      @confirm="confirmDelete"
+      @cancel="closeDeleteModal"
+    />
+
+    <ConfirmModal
+      :show="showLikeErrorModal"
+      title="알림"
+      :message="likeErrorMessage"
+      confirm-text="확인"
+      cancel-text=""
+      :close-on-backdrop="true"
+      @confirm="showLikeErrorModal = false"
+      @cancel="showLikeErrorModal = false"
+    />
   </div>
   <UserFooter />
 </template>
@@ -351,16 +98,22 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useTimeFormat } from '@/composables/useTimeFormat'
 import UserHeader from '@/components/common/UserHeader.vue'
 import UserFooter from '@/components/common/UserFooter.vue'
-import LoadingButton from '@/components/common/LoadingButton.vue'
 import SearchWidget from '@/components/board/SearchWidget.vue'
 import SideWidget from '@/components/board/SideWidget.vue'
+import PostHeader from '@/components/community/PostHeader.vue'
+import PostMeta from '@/components/community/PostMeta.vue'
+import PostActions from '@/components/community/PostActions.vue'
+import CommentSection from '@/components/community/CommentSection.vue'
+import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import {
   getCommunityPostDetail,
   deleteCommunityPost,
   likeCommunityPost,
   bookmarkPost,
+  removeBookmark,
   createAnswer,
   deleteAnswer,
   createComment,
@@ -370,6 +123,7 @@ import {
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const { formatTimeAgo } = useTimeFormat()
 
 // 게시글 데이터
 const post = ref({})
@@ -386,6 +140,8 @@ const isDeleteLoading = ref(false)
 
 // 모달 및 폼 표시 상태
 const showDeleteModal = ref(false)
+const showLikeErrorModal = ref(false)
+const likeErrorMessage = ref('')
 const showAnswerForm = ref(false)
 const showCommentForm = ref(null)
 
@@ -410,25 +166,11 @@ const canEdit = computed(() => {
   return authStore.user && post.value.authorId === authStore.user.id
 })
 
-// 시간 포맷 함수
-const formatTimeAgo = (dateString) => {
-  const now = new Date()
-  const date = new Date(dateString)
-  const diffInSeconds = Math.floor((now - date) / 1000)
-
-  if (diffInSeconds < 60) return '방금 전'
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}분 전`
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}시간 전`
-  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}일 전`
-  if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)}개월 전`
-  return `${Math.floor(diffInSeconds / 31536000)}년 전`
-}
-
 // 데이터 로드
 const loadPostDetail = async () => {
   isLoading.value = true
   try {
-    const result = await getCommunityPostDetail(route.params.id)
+    const result = await getCommunityPostDetail(route.params.postId)
     if (result.success) {
       post.value = result.data.post
       answers.value = result.data.answers || []
@@ -451,13 +193,15 @@ const handleLike = async () => {
   try {
     const result = await likeCommunityPost(post.value.id)
     if (result.success) {
-      post.value.likes = result.data.likes
+      post.value.likes++
     } else {
-      alert(result.message || '좋아요 처리 중 오류가 발생했습니다.')
+      likeErrorMessage.value = result.message || '좋아요 처리 중 오류가 발생했습니다.'
+      showLikeErrorModal.value = true
     }
   } catch (error) {
     console.error('좋아요 실패:', error)
-    alert('좋아요 처리 중 오류가 발생했습니다.')
+    likeErrorMessage.value = '좋아요 처리 중 오류가 발생했습니다.'
+    showLikeErrorModal.value = true
   } finally {
     isLikeLoading.value = false
   }
@@ -467,9 +211,22 @@ const handleLike = async () => {
 const handleBookmark = async () => {
   isBookmarkLoading.value = true
   try {
-    const result = await bookmarkPost(post.value.id)
+    let result
+    if (bookmarked.value) {
+      // 북마크가 되어있으면 취소
+      result = await removeBookmark(post.value.id)
+    } else {
+      // 북마크가 안되어있으면 추가
+      result = await bookmarkPost(post.value.id)
+    }
+
     if (result.success) {
-      bookmarked.value = result.data.bookmarked
+      // API 응답에 bookmarked 값이 있으면 사용, 없으면 직접 토글
+      if (result.data && typeof result.data.bookmarked !== 'undefined') {
+        bookmarked.value = result.data.bookmarked
+      } else {
+        bookmarked.value = !bookmarked.value
+      }
     } else {
       alert(result.message || '북마크 처리 중 오류가 발생했습니다.')
     }

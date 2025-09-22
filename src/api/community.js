@@ -3,14 +3,6 @@ import { API_BASE_URL, API_ENDPOINTS, RESPONSE_CODES } from '@/utils/constants'
 
 axios.defaults.withCredentials = true
 
-// import {
-//   getBookmarkedPosts,
-//   getUserPosts,
-//   getRepliedPosts,
-//   deleteCommunityPost,
-//   bookmarkPost,
-// } from '@/api/community'
-
 // 북마크 포스트 조회
 export async function getBookmarkedPosts(userData) {
   try {
@@ -52,9 +44,21 @@ export async function deleteCommunityPost(userData) {
   }
 }
 
-export async function bookmarkPost(userData) {
+// 북마크 등록
+export async function bookmarkPost(postId) {
   try {
-    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
+    const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.BOOKMARK.ADD}/${postId}`)
+
+    return { success: true, data: response.data }
+  } catch (error) {
+    return { suceess: false, message: '잠시후 다시 시도해 주세요. (' + error.message + ')' }
+  }
+}
+
+// 북마크 취소
+export async function removeBookmark(postId) {
+  try {
+    const response = await axios.delete(`${API_BASE_URL}${API_ENDPOINTS.BOOKMARK.REMOVE}/${postId}`)
 
     return { success: true, data: response.data }
   } catch (error) {
@@ -72,7 +76,73 @@ export async function createCommunityPost(userData) {
   }
 }
 
+// 게시글 상세 조회
+export async function getCommunityPostDetail(postId) {
+  try {
+    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.COMMUNITY.DETAIL}/${postId}`)
+
+    return { success: true, data: response.data }
+  } catch (error) {
+    return { suceess: false, message: '잠시후 다시 시도해 주세요. (' + error.message + ')' }
+  }
+}
+
 export async function getCategories(userData) {
+  try {
+    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
+
+    return { success: true, data: response.data }
+  } catch (error) {
+    return { suceess: false, message: '잠시후 다시 시도해 주세요. (' + error.message + ')' }
+  }
+}
+
+// 게시글 좋아요
+export async function likeCommunityPost(postId) {
+  try {
+    const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.LIKE.ADD}/${postId}`)
+
+    if (response.data.code === RESPONSE_CODES.ALREADY_LIKED) {
+      return { suceess: false, message: response.data.message }
+    }
+
+    return { success: true, data: response.data }
+  } catch (error) {
+    return { suceess: false, message: '잠시후 다시 시도해 주세요. (' + error.message + ')' }
+  }
+}
+
+export async function createAnswer(userData) {
+  try {
+    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
+
+    return { success: true, data: response.data }
+  } catch (error) {
+    return { suceess: false, message: '잠시후 다시 시도해 주세요. (' + error.message + ')' }
+  }
+}
+
+export async function deleteAnswer(userData) {
+  try {
+    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
+
+    return { success: true, data: response.data }
+  } catch (error) {
+    return { suceess: false, message: '잠시후 다시 시도해 주세요. (' + error.message + ')' }
+  }
+}
+
+export async function createComment(userData) {
+  try {
+    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
+
+    return { success: true, data: response.data }
+  } catch (error) {
+    return { suceess: false, message: '잠시후 다시 시도해 주세요. (' + error.message + ')' }
+  }
+}
+
+export async function deleteComment(userData) {
   try {
     const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
 

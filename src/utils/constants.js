@@ -10,18 +10,27 @@ export const API_ENDPOINTS = {
     REFRESH: '/api/auth/refresh',
     CHECK_SESSION: '/api/auth/session',
   },
-  POSTS: {
-    LIST: '/api/posts',
-    DETAIL: '/api/posts',
+  COMMUNITY: {
+    LIST: '/api/communities',
+    DETAIL: '/api/community',
     CREATE: '/api/posts',
     UPDATE: '/api/posts',
     DELETE: '/api/posts',
   },
+  BOOKMARK: {
+    LIST: '/api/bookmarks',
+    ADD: '/api/bookmark',
+    REMOVE: '/api/bookmark',
+  },
+
+  LIKE: {
+    ADD: '/api/community/like',
+  },
+
   USER: {
     ACTIVITY: '/api/users/activity',
     PROFILE: '/api/users/profile',
   },
-  COMMUNITIES: '/api/communities',
   CATEGORIES: '/api/categories',
 }
 
@@ -33,6 +42,8 @@ export const RESPONSE_CODES = {
   USER_NOT_FOUND: 'USER_NOT_FOUND',
   INVALID_PASSWORD: 'INVALID_PASSWORD',
   INVALID_SESSION: 'INVALID_SESSION',
+
+  ALREADY_LIKED: 'ALREADY_LIKED',
 }
 
 // 페이지네이션 상수

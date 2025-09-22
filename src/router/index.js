@@ -3,6 +3,7 @@ import SignUp from '@/views/auth/SignUp.vue'
 import SignIn from '@/views/auth/SignIn.vue'
 import Communities from '@/views/community/CommunityList.vue'
 import CommunityCreate from '@/views/community/CommunityCreate.vue'
+import CommunityDetail from '@/views/community/CommunityDetail.vue'
 import Test from '@/views/TestView.vue'
 import UserActivity from '@/views/user/Activity.vue'
 import UserProfile from '@/views/user/ProfileUpdate.vue'
@@ -15,6 +16,7 @@ const router = createRouter({
     { path: '/signin', component: SignIn, meta: { requiresAuth: false } },
     { path: '/communities', component: Communities, meta: { requiresAuth: true } },
     { path: '/community/create', component: CommunityCreate, meta: { requiresAuth: true } },
+    { path: '/community/:postId', component: CommunityDetail, meta: { isAuthenticated: true } },
     { path: '/test', component: Test, meta: { requiresAuth: true } },
     { path: '/users/activity', component: UserActivity, meta: { requiresAuth: true } },
     { path: '/users/profile', component: UserProfile, meta: { requiresAuth: true } },
