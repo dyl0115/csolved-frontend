@@ -34,9 +34,12 @@ export async function getRepliedPosts(userData) {
   }
 }
 
-export async function deleteCommunityPost(userData) {
+// 게시글 삭제
+export async function deleteCommunityPost(postId) {
   try {
-    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
+    const response = await axios.delete(
+      `${API_BASE_URL}${API_ENDPOINTS.COMMUNITY.DELETE}/${postId}`,
+    )
 
     return { success: true, data: response.data }
   } catch (error) {
@@ -66,6 +69,7 @@ export async function removeBookmark(postId) {
   }
 }
 
+// 게시글 등록
 export async function createCommunityPost(postData) {
   try {
     const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.COMMUNITY.CREATE}`, postData)
@@ -80,6 +84,20 @@ export async function createCommunityPost(postData) {
 export async function getCommunityPostDetail(postId) {
   try {
     const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.COMMUNITY.DETAIL}/${postId}`)
+
+    return { success: true, data: response.data }
+  } catch (error) {
+    return { suceess: false, message: '잠시후 다시 시도해 주세요. (' + error.message + ')' }
+  }
+}
+
+// 게시글 수정
+export async function updateCommunityPost(postId, updateForm) {
+  try {
+    const response = await axios.put(
+      `${API_BASE_URL}${API_ENDPOINTS.COMMUNITY.DETAIL}/${postId}`,
+      updateForm,
+    )
 
     return { success: true, data: response.data }
   } catch (error) {

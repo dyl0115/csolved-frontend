@@ -14,8 +14,8 @@ export const API_ENDPOINTS = {
     LIST: '/api/communities',
     DETAIL: '/api/community',
     CREATE: '/api/community',
-    UPDATE: '/api/posts',
-    DELETE: '/api/posts',
+    UPDATE: '/api/community',
+    DELETE: '/api/community',
     CATEGORIES: '/api/categories',
 
     ANSWER: {

@@ -259,7 +259,7 @@ const handleAnswerSubmit = async () => {
   try {
     const result = await createAnswer({
       postId: post.value.id,
-      authorId: authStore.user.id,
+      authorId: authStore.user.principal.id,
       anonymous: answerForm.anonymous,
       content: answerForm.content,
     })

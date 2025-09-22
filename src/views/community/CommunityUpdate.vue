@@ -27,14 +27,14 @@
                   {{ category.name }}
                 </option>
               </select>
-              <p v-if="errors.categoryId" class="mt-1 text-sm text-red-600">{{ errors.categoryId }}</p>
+              <p v-if="errors.categoryId" class="mt-1 text-sm text-red-600">
+                {{ errors.categoryId }}
+              </p>
             </div>
 
             <!-- 제목 입력 -->
             <div>
-              <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
-                제목
-              </label>
+              <label for="title" class="block text-sm font-medium text-gray-700 mb-2"> 제목 </label>
               <input
                 v-model="form.title"
                 type="text"
@@ -162,7 +162,7 @@ const form = reactive({
   categoryId: '',
   title: '',
   content: '',
-  anonymous: false
+  anonymous: false,
 })
 
 // 태그 관련
@@ -206,7 +206,7 @@ const validateForm = () => {
     newErrors.tags = '태그는 최대 5개까지 입력할 수 있습니다.'
   }
 
-  Object.keys(errors).forEach(key => {
+  Object.keys(errors).forEach((key) => {
     delete errors[key]
   })
   Object.assign(errors, newErrors)
@@ -251,14 +251,14 @@ const handleSubmit = async () => {
     const postData = {
       ...form,
       tags: tags.value.join(','),
-      authorId: authStore.user?.id
+      authorId: authStore.user?.id,
     }
 
-    const result = await updateCommunityPost(route.params.id, postData)
+    const result = await updateCommunityPost(route.params.postId, postData)
 
     if (result.success) {
       // 성공 시 상세 페이지로 이동
-      await router.push(`/community/${route.params.id}`)
+      await router.push(`/community/${route.params.postId}`)
     } else {
       // 서버 에러 처리
       if (result.errors) {
@@ -279,10 +279,10 @@ const handleSubmit = async () => {
 const handleCancel = () => {
   if (hasChanges()) {
     if (confirm('수정 중인 내용이 있습니다. 정말 취소하시겠습니까?')) {
-      router.push(`/community/${route.params.id}`)
+      router.push(`/community/${route.params.postId}`)
     }
   } else {
-    router.push(`/community/${route.params.id}`)
+    router.push(`/community/${route.params.postId}`)
   }
 }
 
@@ -291,7 +291,7 @@ const loadCategories = async () => {
   try {
     const result = await getCategories()
     if (result.success) {
-      categories.value = result.data
+      categories.value = result.data.categories
     }
   } catch (error) {
     console.error('카테고리 로드 실패:', error)
@@ -301,14 +301,14 @@ const loadCategories = async () => {
 // 기존 게시글 데이터 로드
 const loadPostData = async () => {
   try {
-    const result = await getCommunityPostDetail(route.params.id)
+    const result = await getCommunityPostDetail(route.params.postId)
     if (result.success) {
       const post = result.data.post
 
       // 작성자 확인
       if (post.authorId !== authStore.user?.id) {
         alert('수정 권한이 없습니다.')
-        router.push(`/community/${route.params.id}`)
+        router.push(`/community/${route.params.postId}`)
         return
       }
 
@@ -320,7 +320,7 @@ const loadPostData = async () => {
 
       // 태그 설정
       if (post.tags) {
-        tags.value = post.tags.map(tag => tag.name)
+        tags.value = post.tags.map((tag) => tag.name)
       }
 
       // 원본 데이터 저장
@@ -329,7 +329,7 @@ const loadPostData = async () => {
         title: post.title,
         content: post.content,
         anonymous: post.anonymous,
-        tags: post.tags ? post.tags.map(tag => tag.name) : []
+        tags: post.tags ? post.tags.map((tag) => tag.name) : [],
       })
     } else {
       alert('게시글을 불러올 수 없습니다.')
@@ -355,8 +355,10 @@ onMounted(async () => {
 
 /* 태그 입력 필드 포커스 스타일 */
 .focus-within\:ring-2:focus-within {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width)
+    var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width))
+    var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
