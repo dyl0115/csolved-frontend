@@ -19,7 +19,7 @@ export function useBoard(apiEndpoint = '/api/posts') {
     currentPage: 1,
     totalPage: 1,
     totalCount: 0,
-    pageSize: 20
+    pageSize: 20,
   })
 
   // 검색 폼
@@ -29,8 +29,8 @@ export function useBoard(apiEndpoint = '/api/posts') {
     searchOptions: [
       { value: 'title', label: '제목' },
       { value: 'content', label: '내용' },
-      { value: 'author', label: '작성자' }
-    ]
+      { value: 'author', label: '작성자' },
+    ],
   })
 
   // 정렬 타입
@@ -39,7 +39,7 @@ export function useBoard(apiEndpoint = '/api/posts') {
     { value: 'recent', label: '최신순', icon: 'bi bi-clock' },
     { value: 'popular', label: '인기순', icon: 'bi bi-fire' },
     { value: 'views', label: '조회순', icon: 'bi bi-eye' },
-    { value: 'comments', label: '댓글순', icon: 'bi bi-chat-dots' }
+    { value: 'comments', label: '댓글순', icon: 'bi bi-chat-dots' },
   ])
 
   // 선택된 카테고리
@@ -65,29 +65,30 @@ export function useBoard(apiEndpoint = '/api/posts') {
       // 현재 상태를 쿼리에서 업데이트
       updateStateFromQuery()
 
-      const response = await axios.get(`${apiEndpoint}?${params}`)
+      const response = await axios.get(`http://localhost:8080${apiEndpoint}?${params}`)
 
-      if (response.data.success) {
-        posts.value = response.data.data.posts || []
+      if (response.data.status === 200) {
+        posts.value = response.data.posts || []
 
         // 페이지네이션 정보 업데이트
-        if (response.data.data.pagination) {
-          Object.assign(pagination, response.data.data.pagination)
+        if (response.data.pagination) {
+          console.log('pagination', response.data.pagination)
+          Object.assign(pagination, response.data.pagination)
         }
 
         // 카테고리 정보 (첫 로드시에만)
-        if (response.data.data.categories && categories.value.length === 0) {
-          categories.value = response.data.data.categories
+        if (response.data.categories && categories.value.length === 0) {
+          categories.value = response.data.categories
         }
 
         // 인기 게시글 (사이드바용)
-        if (response.data.data.popularPosts) {
-          popularPosts.value = response.data.data.popularPosts
+        if (response.data.popularPosts) {
+          popularPosts.value = response.data.popularPosts
         }
 
         // 기술 스택 (프로젝트용)
-        if (response.data.data.techStacks) {
-          techStacks.value = response.data.data.techStacks
+        if (response.data.techStacks) {
+          techStacks.value = response.data.techStacks
         }
       }
     } catch (err) {
@@ -144,7 +145,7 @@ export function useBoard(apiEndpoint = '/api/posts') {
     await updateQuery({
       search: searchData.query,
       searchType: searchData.searchType,
-      page: 1
+      page: 1,
     })
   }
 
@@ -167,7 +168,7 @@ export function useBoard(apiEndpoint = '/api/posts') {
   const hasData = computed(() => posts.value.length > 0)
   const hasPagination = computed(() => pagination.totalPage > 1)
   const currentSortOption = computed(() =>
-    sortOptions.value.find(option => option.value === sortType.value)
+    sortOptions.value.find((option) => option.value === sortType.value),
   )
 
   return {
@@ -197,6 +198,6 @@ export function useBoard(apiEndpoint = '/api/posts') {
     handleSortChange,
     handleCategoryFilter,
     handleTechStackFilter,
-    updateQuery
+    updateQuery,
   }
 }

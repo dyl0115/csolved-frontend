@@ -116,7 +116,7 @@ const {
   handleSearch,
   handleSortChange,
   handleCategoryFilter,
-} = useBoard('/communities')
+} = useBoard('/api/communities')
 
 // 컴포넌트 마운트 시 데이터 로드
 onMounted(loadData)

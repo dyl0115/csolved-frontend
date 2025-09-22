@@ -16,7 +16,7 @@
           <PostTags v-if="showTags && post.tags?.length" :tags="post.tags" class="mb-4" />
 
           <!-- 메타 정보 -->
-          <PostMeta v-if="showMeta" :post="post" :show-category="showCategory" :layout="layout" />
+          <PostMeta v-if="showMeta" :post="post" :show-category="showCategory" :layout="metaLayout" />
         </div>
       </router-link>
     </template>
@@ -110,6 +110,17 @@ const titleClass = computed(() => {
     table: 'text-base',
   }
   return layouts[props.layout]
+})
+
+// PostMeta 컴포넌트에 맞는 layout 매핑
+const metaLayout = computed(() => {
+  const layoutMap = {
+    default: 'horizontal',
+    compact: 'compact',
+    card: 'horizontal',
+    table: 'horizontal'
+  }
+  return layoutMap[props.layout] || 'horizontal'
 })
 
 const handleClick = () => {

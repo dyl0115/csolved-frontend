@@ -104,7 +104,10 @@
               :disabled="isBookmarkLoading"
               class="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50"
             >
-              <i :class="bookmarked ? 'bi bi-bookmark-x-fill' : 'bi bi-bookmark-fill'" class="mr-2"></i>
+              <i
+                :class="bookmarked ? 'bi bi-bookmark-x-fill' : 'bi bi-bookmark-fill'"
+                class="mr-2"
+              ></i>
               {{ bookmarked ? '북마크 취소' : '북마크' }}
             </button>
           </div>
@@ -121,7 +124,9 @@
                   placeholder="댓글을 달아 생각을 공유해 주세요!"
                   required
                 ></textarea>
-                <p v-if="answerErrors.content" class="text-sm text-red-600">{{ answerErrors.content }}</p>
+                <p v-if="answerErrors.content" class="text-sm text-red-600">
+                  {{ answerErrors.content }}
+                </p>
 
                 <div class="flex justify-between items-center">
                   <div class="flex items-center">
@@ -157,12 +162,20 @@
 
               <!-- 답변 목록 -->
               <div v-else class="space-y-6">
-                <div v-for="answer in answers" :key="answer.id" class="border-b border-gray-200 pb-6 last:border-b-0">
+                <div
+                  v-for="answer in answers"
+                  :key="answer.id"
+                  class="border-b border-gray-200 pb-6 last:border-b-0"
+                >
                   <div class="flex space-x-3">
                     <!-- 프로필 이미지 -->
                     <div class="flex-shrink-0">
                       <img
-                        :src="answer.anonymous ? '/images/anonymous.jpg' : (answer.authorProfileImage || '/images/default-profile.png')"
+                        :src="
+                          answer.anonymous
+                            ? '/images/anonymous.jpg'
+                            : answer.authorProfileImage || '/images/default-profile.png'
+                        "
                         :alt="answer.anonymous ? '익명' : answer.authorNickname"
                         class="h-10 w-10 rounded-full object-cover"
                       />
@@ -174,7 +187,9 @@
                         <h4 class="text-sm font-medium text-gray-900">
                           {{ answer.anonymous ? '익명' : answer.authorNickname }}
                         </h4>
-                        <span class="text-sm text-gray-500">{{ formatTimeAgo(answer.createdAt) }}</span>
+                        <span class="text-sm text-gray-500">{{
+                          formatTimeAgo(answer.createdAt)
+                        }}</span>
                         <button
                           v-if="answer.authorId === authStore.user?.id"
                           @click="handleAnswerDelete(answer.id)"
@@ -194,7 +209,10 @@
                       </button>
 
                       <!-- 대댓글 작성 폼 -->
-                      <div v-show="showCommentForm === answer.id" class="mt-4 bg-gray-50 rounded-lg p-4">
+                      <div
+                        v-show="showCommentForm === answer.id"
+                        class="mt-4 bg-gray-50 rounded-lg p-4"
+                      >
                         <form @submit.prevent="handleCommentSubmit(answer.id)" class="space-y-3">
                           <textarea
                             v-model="commentForms[answer.id]?.content || ''"
@@ -212,7 +230,10 @@
                                 :id="`comment-anonymous-${answer.id}`"
                                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                               />
-                              <label :for="`comment-anonymous-${answer.id}`" class="ml-2 text-sm text-gray-700">
+                              <label
+                                :for="`comment-anonymous-${answer.id}`"
+                                class="ml-2 text-sm text-gray-700"
+                              >
                                 익명으로 댓글 달기
                               </label>
                             </div>
@@ -228,11 +249,22 @@
                       </div>
 
                       <!-- 대댓글 목록 -->
-                      <div v-if="answer.comments && answer.comments.length > 0" class="mt-4 space-y-3">
-                        <div v-for="comment in answer.comments" :key="comment.id" class="flex space-x-3 ml-4">
+                      <div
+                        v-if="answer.comments && answer.comments.length > 0"
+                        class="mt-4 space-y-3"
+                      >
+                        <div
+                          v-for="comment in answer.comments"
+                          :key="comment.id"
+                          class="flex space-x-3 ml-4"
+                        >
                           <div class="flex-shrink-0">
                             <img
-                              :src="comment.anonymous ? '/images/anonymous.jpg' : (comment.authorProfileImage || '/images/default-profile.png')"
+                              :src="
+                                comment.anonymous
+                                  ? '/images/anonymous.jpg'
+                                  : comment.authorProfileImage || '/images/default-profile.png'
+                              "
                               :alt="comment.anonymous ? '익명' : comment.authorNickname"
                               class="h-8 w-8 rounded-full object-cover"
                             />
@@ -242,7 +274,9 @@
                               <h5 class="text-sm font-medium text-gray-900">
                                 {{ comment.anonymous ? '익명' : comment.authorNickname }}
                               </h5>
-                              <span class="text-xs text-gray-500">{{ formatTimeAgo(comment.createdAt) }}</span>
+                              <span class="text-xs text-gray-500">{{
+                                formatTimeAgo(comment.createdAt)
+                              }}</span>
                               <button
                                 v-if="comment.authorId === authStore.user?.id"
                                 @click="handleCommentDelete(comment.id)"
@@ -291,7 +325,12 @@
             <h3 class="text-lg font-semibold text-gray-900 mb-4">게시글 삭제</h3>
             <p class="text-gray-600 mb-6">정말 삭제하시겠습니까?</p>
             <div class="flex space-x-4">
-              <button @click="closeDeleteModal" class="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">취소</button>
+              <button
+                @click="closeDeleteModal"
+                class="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              >
+                취소
+              </button>
               <LoadingButton
                 @click="confirmDelete"
                 :loading="isDeleteLoading"
@@ -325,7 +364,7 @@ import {
   createAnswer,
   deleteAnswer,
   createComment,
-  deleteComment
+  deleteComment,
 } from '@/api/community'
 
 const route = useRoute()
@@ -353,7 +392,7 @@ const showCommentForm = ref(null)
 // 폼 데이터
 const answerForm = reactive({
   content: '',
-  anonymous: false
+  anonymous: false,
 })
 
 const commentForms = ref({})
@@ -363,7 +402,7 @@ const answerErrors = reactive({})
 // 검색 폼
 const searchForm = reactive({
   searchType: 'title',
-  searchKeyword: ''
+  searchKeyword: '',
 })
 
 // 계산된 속성
@@ -448,7 +487,7 @@ const toggleAnswerForm = () => {
   if (showAnswerForm.value) {
     answerForm.content = ''
     answerForm.anonymous = false
-    Object.keys(answerErrors).forEach(key => delete answerErrors[key])
+    Object.keys(answerErrors).forEach((key) => delete answerErrors[key])
   }
 }
 
@@ -465,7 +504,7 @@ const handleAnswerSubmit = async () => {
       postId: post.value.id,
       content: answerForm.content,
       anonymous: answerForm.anonymous,
-      authorId: authStore.user.id
+      authorId: authStore.user.id,
     })
 
     if (result.success) {
@@ -515,7 +554,7 @@ const toggleCommentForm = (answerId) => {
     if (!commentForms.value[answerId]) {
       commentForms.value[answerId] = {
         content: '',
-        anonymous: false
+        anonymous: false,
       }
     }
   }
@@ -533,7 +572,7 @@ const handleCommentSubmit = async (answerId) => {
       answerId: answerId,
       content: commentForm.content,
       anonymous: commentForm.anonymous,
-      authorId: authStore.user.id
+      authorId: authStore.user.id,
     })
 
     if (result.success) {
@@ -603,8 +642,8 @@ const handleSearch = (searchData) => {
     query: {
       page: 1,
       searchType: searchData.searchType,
-      searchKeyword: searchData.searchKeyword
-    }
+      searchKeyword: searchData.searchKeyword,
+    },
   })
 }
 

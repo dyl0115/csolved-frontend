@@ -79,9 +79,9 @@ const props = defineProps({
       views: true,
       author: true,
       date: true,
-      modified: true
-    })
-  }
+      modified: true,
+    }),
+  },
 })
 
 const { formatTimeAgo } = useTimeFormat()
