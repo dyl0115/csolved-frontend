@@ -16,6 +16,11 @@ export const API_ENDPOINTS = {
     CREATE: '/api/posts',
     UPDATE: '/api/posts',
     DELETE: '/api/posts',
+
+    ANSWER: {
+      CREATE: '/api/community/answer',
+      DELETE: '/api/community/answer',
+    },
   },
   BOOKMARK: {
     LIST: '/api/bookmarks',

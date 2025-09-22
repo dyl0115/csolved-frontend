@@ -112,9 +112,13 @@ export async function likeCommunityPost(postId) {
   }
 }
 
-export async function createAnswer(userData) {
+// 댓글 등록
+export async function createAnswer(answerForm) {
   try {
-    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
+    const response = await axios.post(
+      `${API_BASE_URL}${API_ENDPOINTS.COMMUNITY.ANSWER.CREATE}`,
+      answerForm,
+    )
 
     return { success: true, data: response.data }
   } catch (error) {
@@ -122,9 +126,13 @@ export async function createAnswer(userData) {
   }
 }
 
-export async function deleteAnswer(userData) {
+// 댓글 삭제
+export async function deleteAnswer(answerId) {
   try {
-    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
+    const response = await axios.delete(
+      `${API_BASE_URL}${API_ENDPOINTS.COMMUNITY.ANSWER.DELETE}/${answerId}`,
+      answerId,
+    )
 
     return { success: true, data: response.data }
   } catch (error) {
