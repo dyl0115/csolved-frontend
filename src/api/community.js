@@ -66,13 +66,13 @@ export async function removeBookmark(postId) {
   }
 }
 
-export async function createCommunityPost(userData) {
+export async function createCommunityPost(postData) {
   try {
-    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
+    const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.COMMUNITY.CREATE}`, postData)
 
     return { success: true, data: response.data }
   } catch (error) {
-    return { suceess: false, message: '잠시후 다시 시도해 주세요. (' + error.message + ')' }
+    return { success: false, message: '잠시후 다시 시도해 주세요. (' + error.message + ')' }
   }
 }
 
@@ -87,13 +87,13 @@ export async function getCommunityPostDetail(postId) {
   }
 }
 
-export async function getCategories(userData) {
+// 게시글 카테고리 조회
+export async function getCategories() {
   try {
-    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
-
+    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.COMMUNITY.CATEGORIES}`)
     return { success: true, data: response.data }
   } catch (error) {
-    return { suceess: false, message: '잠시후 다시 시도해 주세요. (' + error.message + ')' }
+    return { success: false, message: '잠시후 다시 시도해 주세요. (' + error.message + ')' }
   }
 }
 

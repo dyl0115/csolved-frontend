@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-blue-600 shadow-lg">
+  <header class="bg-gray-900 shadow-lg">
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex justify-between items-center py-4">
         <!-- 로고 -->

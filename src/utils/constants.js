@@ -13,9 +13,10 @@ export const API_ENDPOINTS = {
   COMMUNITY: {
     LIST: '/api/communities',
     DETAIL: '/api/community',
-    CREATE: '/api/posts',
+    CREATE: '/api/community',
     UPDATE: '/api/posts',
     DELETE: '/api/posts',
+    CATEGORIES: '/api/categories',
 
     ANSWER: {
       CREATE: '/api/community/answer',
@@ -36,7 +37,6 @@ export const API_ENDPOINTS = {
     ACTIVITY: '/api/users/activity',
     PROFILE: '/api/users/profile',
   },
-  CATEGORIES: '/api/categories',
 }
 
 // 응답 코드 상수

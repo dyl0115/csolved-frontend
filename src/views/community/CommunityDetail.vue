@@ -39,7 +39,7 @@
 
           <CommentSection
             :comments="answers"
-            :current-user-id="authStore.user?.principal.id"
+            :current-user-id="authStore.user?.id"
             :show-answer-form="showAnswerForm"
             :answer-form="answerForm"
             :answer-errors="answerErrors"
@@ -259,7 +259,7 @@ const handleAnswerSubmit = async () => {
   try {
     const result = await createAnswer({
       postId: post.value.id,
-      authorId: authStore.user.principal.id,
+      authorId: authStore.user.id,
       anonymous: answerForm.anonymous,
       content: answerForm.content,
     })

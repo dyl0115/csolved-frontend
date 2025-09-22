@@ -72,7 +72,6 @@ export function useBoard(apiEndpoint = '/api/posts') {
 
         // 페이지네이션 정보 업데이트
         if (response.data.pagination) {
-          console.log('pagination', response.data.pagination)
           Object.assign(pagination, response.data.pagination)
         }
 

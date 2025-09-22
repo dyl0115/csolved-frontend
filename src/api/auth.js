@@ -37,7 +37,7 @@ export async function signIn(userData) {
       return { success: false, message: '비밀번호가 올바르지 않습니다.' }
     }
 
-    return { success: true, data: response.data }
+    return { success: true, data: response.data.principal }
   } catch (error) {
     return { suceess: false, message: '잠시후 다시 시도해 주세요. (' + error.message + ')' }
   }
