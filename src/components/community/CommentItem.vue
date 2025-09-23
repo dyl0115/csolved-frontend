@@ -72,7 +72,7 @@
           :formatted-created-at="reply.formattedCreatedAt"
           :current-user-id="currentUserId"
           :is-reply="true"
-          @delete="$emit('delete', $event)"
+          @delete="$emit('deleteReply', $event)"
         />
       </div>
     </div>
@@ -129,7 +129,7 @@ const props = defineProps({
   }
 })
 
-defineEmits(['delete', 'toggleReply', 'submitReply'])
+defineEmits(['delete', 'deleteReply', 'toggleReply', 'submitReply'])
 
 const displayName = computed(() =>
   props.anonymous ? '익명' : props.authorNickname

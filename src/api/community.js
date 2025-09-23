@@ -158,9 +158,13 @@ export async function deleteAnswer(answerId) {
   }
 }
 
-export async function createComment(userData) {
+// 대댓글 달기
+export async function createComment(formData) {
   try {
-    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
+    const response = await axios.post(
+      `${API_BASE_URL}${API_ENDPOINTS.COMMUNITY.COMMENT.CREATE(formData.postId, formData.answerId)}`,
+      formData,
+    )
 
     return { success: true, data: response.data }
   } catch (error) {
@@ -168,9 +172,12 @@ export async function createComment(userData) {
   }
 }
 
-export async function deleteComment(userData) {
+// 대댓글 삭제
+export async function deleteComment(commentId) {
   try {
-    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
+    const response = await axios.delete(
+      `${API_BASE_URL}${API_ENDPOINTS.COMMUNITY.COMMENT.DELETE(commentId)}`,
+    )
 
     return { success: true, data: response.data }
   } catch (error) {

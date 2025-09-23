@@ -26,11 +26,7 @@
               익명으로 댓글 달기
             </label>
           </div>
-          <LoadingButton
-            type="submit"
-            :loading="isLoading"
-            :class="buttonClass"
-          >
+          <LoadingButton type="submit" :loading="isLoading" :class="buttonClass">
             등록
           </LoadingButton>
         </div>
@@ -46,56 +42,60 @@ import LoadingButton from '@/components/common/LoadingButton.vue'
 const props = defineProps({
   show: {
     type: Boolean,
-    default: false
+    default: false,
   },
   formData: {
     type: Object,
-    required: true
+    required: true,
   },
   errors: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
   isLoading: {
     type: Boolean,
-    default: false
+    default: false,
   },
   placeholder: {
     type: String,
-    default: '댓글을 달아 생각을 공유해 주세요!'
+    default: '댓글을 달아 생각을 공유해 주세요!',
   },
   rows: {
     type: Number,
-    default: 4
+    default: 4,
   },
   wrapperClass: {
     type: String,
-    default: 'bg-white rounded-lg shadow mb-6'
+    default: 'bg-white rounded-lg shadow mb-6',
   },
   buttonClass: {
     type: String,
-    default: 'px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+    default:
+      'px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
   },
   idSuffix: {
     type: String,
-    default: ''
-  }
+    default: '',
+  },
 })
 
 const emit = defineEmits(['submit'])
 
 const anonymousCheckboxId = computed(() =>
-  props.idSuffix ? `anonymous-${props.idSuffix}` : 'anonymous'
+  props.idSuffix ? `anonymous-${props.idSuffix}` : 'anonymous',
 )
 
 const handleSubmit = () => {
   emit('submit', props.formData)
 }
 
-watch(() => props.show, (newShow) => {
-  if (newShow) {
-    props.formData.content = ''
-    props.formData.anonymous = false
-  }
-})
+watch(
+  () => props.show,
+  (newShow) => {
+    if (newShow) {
+      props.formData.content = ''
+      props.formData.anonymous = false
+    }
+  },
+)
 </script>

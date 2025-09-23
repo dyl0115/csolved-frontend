@@ -49,7 +49,8 @@
             :is-comment-loading="isCommentLoading"
             :format-time-ago="formatTimeAgo"
             @submit-answer="handleAnswerSubmit"
-            @delete-comment="handleAnswerDelete"
+            @delete-answer="handleAnswerDelete"
+            @delete-comment="handleCommentDelete"
             @toggle-comment-form="toggleCommentForm"
             @submit-comment="handleCommentSubmit"
           />
@@ -259,7 +260,7 @@ const handleAnswerSubmit = async () => {
   try {
     const result = await createAnswer({
       postId: post.value.id,
-      authorId: authStore.user.principal.id,
+      authorId: authStore.user.id,
       anonymous: answerForm.anonymous,
       content: answerForm.content,
     })

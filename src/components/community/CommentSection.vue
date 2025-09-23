@@ -36,9 +36,10 @@
             :show-reply-form="showCommentForm === comment.id"
             :reply-form-data="commentForms[comment.id] || { content: '', anonymous: false }"
             :is-reply-loading="isCommentLoading"
-            @delete="$emit('deleteComment', $event)"
+            @delete="$emit('deleteAnswer', $event)"
+            @delete-reply="$emit('deleteComment', $event)"
             @toggle-reply="$emit('toggleCommentForm', $event)"
-            @submit-reply="$emit('submitComment', $event, $arguments[1])"
+            @submit-reply="(data, commentId) => $emit('submitComment', data, commentId)"
           />
         </div>
       </div>
@@ -54,50 +55,51 @@ import CommentItem from './CommentItem.vue'
 const props = defineProps({
   comments: {
     type: Array,
-    required: true
+    required: true,
   },
   currentUserId: [String, Number],
   showAnswerForm: {
     type: Boolean,
-    default: false
+    default: false,
   },
   answerForm: {
     type: Object,
-    required: true
+    required: true,
   },
   answerErrors: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
   isAnswerLoading: {
     type: Boolean,
-    default: false
+    default: false,
   },
   showCommentForm: [String, Number, null],
   commentForms: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
   isCommentLoading: {
     type: Boolean,
-    default: false
+    default: false,
   },
   formatTimeAgo: {
     type: Function,
-    required: true
-  }
+    required: true,
+  },
 })
 
-defineEmits(['submitAnswer', 'deleteComment', 'toggleCommentForm', 'submitComment'])
+defineEmits(['submitAnswer', 'deleteAnswer', 'deleteComment', 'toggleCommentForm', 'submitComment'])
 
 const commentsWithFormattedTime = computed(() =>
-  props.comments.map(comment => ({
+  props.comments.map((comment) => ({
     ...comment,
     formattedCreatedAt: props.formatTimeAgo(comment.createdAt),
-    repliesWithFormattedTime: comment.comments?.map(reply => ({
-      ...reply,
-      formattedCreatedAt: props.formatTimeAgo(reply.createdAt)
-    })) || []
-  }))
+    repliesWithFormattedTime:
+      comment.comments?.map((reply) => ({
+        ...reply,
+        formattedCreatedAt: props.formatTimeAgo(reply.createdAt),
+      })) || [],
+  })),
 )
 </script>
