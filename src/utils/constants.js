@@ -27,19 +27,24 @@ export const API_ENDPOINTS = {
       CREATE: (postId, answerId) => `/api/community/${postId}/answer/${answerId}/comment`,
       DELETE: (commentId) => `/api/community/comment/${commentId}`,
     },
-  },
-  BOOKMARK: {
-    LIST: '/api/bookmarks',
-    ADD: '/api/bookmark',
-    REMOVE: '/api/bookmark',
-  },
 
-  LIKE: {
-    ADD: '/api/community/like',
+    BOOKMARK: {
+      // LIST: '/api/bookmarks',
+      ADD: '/api/bookmark',
+      REMOVE: '/api/bookmark',
+    },
+
+    LIKE: {
+      ADD: '/api/community/like',
+    },
   },
 
   USER: {
-    ACTIVITY: '/api/users/activity',
+    ACTIVITY: {
+      BOOKMARK: '/api/users/activities/bookmarks',
+      REPLIED_POST: '/api/users/activities/replied-posts',
+      POSTS: '/api/users/activities/posts',
+    },
     PROFILE: '/api/users/profile',
   },
 }

@@ -6,7 +6,7 @@ import CommunityCreate from '@/views/community/CommunityCreate.vue'
 import CommunityDetail from '@/views/community/CommunityDetail.vue'
 import CommunityUpdate from '@/views/community/CommunityUpdate.vue'
 import Test from '@/views/TestView.vue'
-import UserActivity from '@/views/user/Activity.vue'
+import UserActivity from '@/views/user/UserActivity.vue'
 import UserProfile from '@/views/user/ProfileUpdate.vue'
 import { useAuthStore } from '@/stores/auth.js'
 

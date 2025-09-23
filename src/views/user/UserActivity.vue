@@ -23,7 +23,7 @@
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
               ]"
             >
-              북마크 ({{ bookmarkPosts.length }})
+              북마크 ({{ bookmarkTotalPosts || bookmarkPosts.length }})
             </button>
             <button
               @click="activeTab = 'posts'"
@@ -34,7 +34,7 @@
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
               ]"
             >
-              내가 쓴 글 ({{ userPosts.length }})
+              내가 쓴 글 ({{ userPostTotalPosts || userPosts.length }})
             </button>
             <button
               @click="activeTab = 'replies'"
@@ -45,7 +45,7 @@
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
               ]"
             >
-              댓글 단 글 ({{ repliedPosts.length }})
+              댓글 단 글 ({{ repliedPostTotalPosts || repliedPosts.length }})
             </button>
           </nav>
         </div>
@@ -67,7 +67,7 @@
             <div v-else class="space-y-4">
               <div
                 v-for="post in bookmarkPosts"
-                :key="post.id"
+                :key="post.postId"
                 class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200"
               >
                 <div class="flex items-start justify-between">
@@ -81,7 +81,7 @@
                       <span class="text-xs text-gray-500">{{ formatTimeAgo(post.createdAt) }}</span>
                     </div>
                     <router-link
-                      :to="`/community/${post.id}`"
+                      :to="`/community/${post.postId}`"
                       class="text-lg font-medium text-gray-900 hover:text-blue-600 line-clamp-2"
                     >
                       {{ post.title }}
@@ -106,7 +106,7 @@
                     </div>
                   </div>
                   <button
-                    @click="handleBookmarkToggle(post.id, 'bookmarks')"
+                    @click="handleBookmarkToggle(post.postId, 'bookmarks')"
                     class="ml-4 text-green-600 hover:text-green-800"
                   >
                     <i class="bi bi-bookmark-x-fill text-lg"></i>
@@ -329,11 +329,14 @@ import {
   getRepliedPosts,
   deleteCommunityPost,
   bookmarkPost,
+  removeBookmark,
 } from '@/api/community'
+import { useTimeFormat } from '@/composables/useTimeFormat'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const { formatTimeAgo } = useTimeFormat()
 
 // 활성 탭
 const activeTab = ref('bookmarks')
@@ -342,6 +345,11 @@ const activeTab = ref('bookmarks')
 const bookmarkPosts = ref([])
 const userPosts = ref([])
 const repliedPosts = ref([])
+
+// 총 게시물 수
+const bookmarkTotalPosts = ref(0)
+const userPostTotalPosts = ref(0)
+const repliedPostTotalPosts = ref(0)
 
 // 페이지네이션
 const bookmarkPagination = reactive({
@@ -378,28 +386,21 @@ const isDeleteLoading = ref(false)
 const showDeleteModal = ref(false)
 const deletePostId = ref(null)
 
-// 시간 포맷 함수
-const formatTimeAgo = (dateString) => {
-  const now = new Date()
-  const date = new Date(dateString)
-  const diffInSeconds = Math.floor((now - date) / 1000)
-
-  if (diffInSeconds < 60) return '방금 전'
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}분 전`
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}시간 전`
-  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}일 전`
-  if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)}개월 전`
-  return `${Math.floor(diffInSeconds / 31536000)}년 전`
-}
-
 // 북마크한 글 로드
 const loadBookmarkedPosts = async (page = 1) => {
   isBookmarkLoading.value = true
   try {
     const result = await getBookmarkedPosts({ page })
     if (result.success) {
+      // 새로운 JSON 구조에 맞게 업데이트
       bookmarkPosts.value = result.data.posts || []
-      Object.assign(bookmarkPagination, result.data.pagination || {})
+      bookmarkTotalPosts.value = result.data.totalPosts || 0
+      // pagination 객체 사용
+      const pagination = result.data.pagination || {}
+      // 서버에서 totalPage로 보내므로 totalPages로 변환
+      pagination.totalPages = pagination.totalPage
+      pagination.currentPage = page
+      Object.assign(bookmarkPagination, pagination)
     }
   } catch (error) {
     console.error('북마크 목록 로드 실패:', error)
@@ -415,7 +416,12 @@ const loadUserPosts = async (page = 1) => {
     const result = await getUserPosts({ page })
     if (result.success) {
       userPosts.value = result.data.posts || []
-      Object.assign(userPostPagination, result.data.pagination || {})
+      userPostTotalPosts.value = result.data.totalPosts || 0
+      const pagination = result.data.pagination || {}
+      // 서버에서 totalPage로 보내므로 totalPages로 변환
+      pagination.totalPages = pagination.totalPage
+      pagination.currentPage = page
+      Object.assign(userPostPagination, pagination)
     }
   } catch (error) {
     console.error('내 글 목록 로드 실패:', error)
@@ -431,7 +437,12 @@ const loadRepliedPosts = async (page = 1) => {
     const result = await getRepliedPosts({ page })
     if (result.success) {
       repliedPosts.value = result.data.posts || []
-      Object.assign(repliedPostPagination, result.data.pagination || {})
+      repliedPostTotalPosts.value = result.data.totalPosts || 0
+      const pagination = result.data.pagination || {}
+      // 서버에서 totalPage로 보내므로 totalPages로 변환
+      pagination.totalPages = pagination.totalPage
+      pagination.currentPage = page
+      Object.assign(repliedPostPagination, pagination)
     }
   } catch (error) {
     console.error('댓글 단 글 목록 로드 실패:', error)
@@ -441,18 +452,18 @@ const loadRepliedPosts = async (page = 1) => {
 }
 
 // 페이지 업데이트
-const updatePage = (page, type) => {
+const updatePage = async (page, type) => {
   const query = { ...route.query }
 
   if (type === 'bookmarks') {
     query.bookmarkPage = page
-    loadBookmarkedPosts(page)
+    await loadBookmarkedPosts(page)
   } else if (type === 'posts') {
     query.userPostPage = page
-    loadUserPosts(page)
+    await loadUserPosts(page)
   } else if (type === 'replies') {
     query.repliedPostPage = page
-    loadRepliedPosts(page)
+    await loadRepliedPosts(page)
   }
 
   router.push({ query })
@@ -461,9 +472,18 @@ const updatePage = (page, type) => {
 // 북마크 토글
 const handleBookmarkToggle = async (postId, tabType) => {
   try {
-    const result = await bookmarkPost(postId)
+    let result
+
+    if (tabType === 'bookmarks') {
+      // 북마크 리스트에서 클릭 = 북마크 해제
+      result = await removeBookmark(postId)
+    } else {
+      // 다른 탭에서 클릭 = 북마크 추가
+      result = await bookmarkPost(postId)
+    }
+
     if (result.success) {
-      // 북마크 목록에서 제거
+      // 북마크 목록 새로고침
       if (tabType === 'bookmarks') {
         await loadBookmarkedPosts(bookmarkPagination.currentPage)
       }

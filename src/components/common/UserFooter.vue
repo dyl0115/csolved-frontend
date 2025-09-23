@@ -6,39 +6,8 @@
         <div class="text-center md:text-left">
           <h5 class="text-lg font-semibold mb-4">CSolved Platform</h5>
           <p class="text-gray-300 text-sm leading-relaxed">
-            신입 백엔드 개발자들이 함께 성장하고 경험을 공유할 수 있는 플랫폼입니다.
+            함께 경험을 공유할 수 있는 플랫폼입니다.
           </p>
-        </div>
-
-        <!-- 게시판 링크 -->
-        <div class="text-center md:text-left">
-          <h5 class="text-lg font-semibold mb-4">게시판</h5>
-          <div class="space-y-2 text-sm">
-            <div>
-              <router-link
-                to="/communities?page=1"
-                class="text-gray-300 hover:text-white transition-colors duration-200"
-              >
-                커뮤니티
-              </router-link>
-            </div>
-            <div>
-              <router-link
-                to="/questions?page=1"
-                class="text-gray-300 hover:text-white transition-colors duration-200"
-              >
-                면접질문
-              </router-link>
-            </div>
-            <div>
-              <router-link
-                to="/code-reviews?page=1"
-                class="text-gray-300 hover:text-white transition-colors duration-200"
-              >
-                코드리뷰
-              </router-link>
-            </div>
-          </div>
         </div>
 
         <!-- 고객지원 -->
@@ -69,8 +38,8 @@ export default {
   computed: {
     currentYear() {
       return new Date().getFullYear()
-    }
-  }
+    },
+  },
 }
 </script>
 

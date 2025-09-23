@@ -4,9 +4,10 @@ import { API_BASE_URL, API_ENDPOINTS, RESPONSE_CODES } from '@/utils/constants'
 axios.defaults.withCredentials = true
 
 // 북마크 포스트 조회
-export async function getBookmarkedPosts(userData) {
+export async function getBookmarkedPosts(params) {
   try {
-    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
+    const url = `${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY.BOOKMARK}?bookmarkPage=${params.page || 1}`
+    const response = await axios.get(url)
 
     return { success: true, data: response.data }
   } catch (error) {
@@ -14,9 +15,11 @@ export async function getBookmarkedPosts(userData) {
   }
 }
 
-export async function getUserPosts(userData) {
+// 내가 작성한 게시글 조회
+export async function getUserPosts(params) {
   try {
-    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
+    const url = `${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY.POSTS}?userPostPage=${params.page || 1}`
+    const response = await axios.get(url)
 
     return { success: true, data: response.data }
   } catch (error) {
@@ -24,9 +27,11 @@ export async function getUserPosts(userData) {
   }
 }
 
-export async function getRepliedPosts(userData) {
+// 내가 댓글단 글 조회
+export async function getRepliedPosts(params) {
   try {
-    const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY}`, userData)
+    const url = `${API_BASE_URL}${API_ENDPOINTS.USER.ACTIVITY.REPLIED_POST}?repliedPostPage=${params.page || 1}`
+    const response = await axios.get(url)
 
     return { success: true, data: response.data }
   } catch (error) {
@@ -50,7 +55,9 @@ export async function deleteCommunityPost(postId) {
 // 북마크 등록
 export async function bookmarkPost(postId) {
   try {
-    const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.BOOKMARK.ADD}/${postId}`)
+    const response = await axios.post(
+      `${API_BASE_URL}${API_ENDPOINTS.COMMUNITY.BOOKMARK.ADD}/${postId}`,
+    )
 
     return { success: true, data: response.data }
   } catch (error) {
@@ -61,7 +68,9 @@ export async function bookmarkPost(postId) {
 // 북마크 취소
 export async function removeBookmark(postId) {
   try {
-    const response = await axios.delete(`${API_BASE_URL}${API_ENDPOINTS.BOOKMARK.REMOVE}/${postId}`)
+    const response = await axios.delete(
+      `${API_BASE_URL}${API_ENDPOINTS.COMMUNITY.BOOKMARK.REMOVE}/${postId}`,
+    )
 
     return { success: true, data: response.data }
   } catch (error) {
@@ -118,7 +127,9 @@ export async function getCategories() {
 // 게시글 좋아요
 export async function likeCommunityPost(postId) {
   try {
-    const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.LIKE.ADD}/${postId}`)
+    const response = await axios.post(
+      `${API_BASE_URL}${API_ENDPOINTS.COMMUNITY.LIKE.ADD}/${postId}`,
+    )
 
     if (response.data.code === RESPONSE_CODES.ALREADY_LIKED) {
       return { suceess: false, message: response.data.message }
