@@ -5,6 +5,10 @@ import Communities from '@/views/community/CommunityList.vue'
 import CommunityCreate from '@/views/community/CommunityCreate.vue'
 import CommunityDetail from '@/views/community/CommunityDetail.vue'
 import CommunityUpdate from '@/views/community/CommunityUpdate.vue'
+import NoticeList from '@/views/notice/NoticeList.vue'
+import NoticeCreate from '@/views/notice/NoticeCreate.vue'
+import NoticeDetail from '@/views/notice/NoticeDetail.vue'
+import NoticeUpdate from '@/views/notice/NoticeUpdate.vue'
 import Test from '@/views/TestView.vue'
 import UserActivity from '@/views/user/UserActivity.vue'
 import UserProfile from '@/views/user/ProfileUpdate.vue'
@@ -21,6 +25,14 @@ const router = createRouter({
     {
       path: '/community/:postId/update',
       component: CommunityUpdate,
+      meta: { isAuthenticated: true },
+    },
+    { path: '/notice', component: NoticeList, meta: { requiresAuth: true } },
+    { path: '/notice/create', component: NoticeCreate, meta: { requiresAuth: true } },
+    { path: '/notice/:noticeId', component: NoticeDetail, meta: { isAuthenticated: true } },
+    {
+      path: '/notice/update/:noticeId',
+      component: NoticeUpdate,
       meta: { isAuthenticated: true },
     },
     { path: '/test', component: Test, meta: { requiresAuth: true } },

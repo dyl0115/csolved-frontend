@@ -25,11 +25,10 @@ export function useBoard(apiEndpoint = '/api/posts') {
 
   // 검색 폼
   const searchForm = reactive({
-    query: '',
+    searchKeyword: '',
     searchType: 'title',
     searchOptions: [
       { value: 'title', label: '제목' },
-      { value: 'content', label: '내용' },
       { value: 'author', label: '작성자' },
     ],
   })
@@ -38,9 +37,9 @@ export function useBoard(apiEndpoint = '/api/posts') {
   const sortType = ref('recent')
   const sortOptions = ref([
     { value: 'recent', label: '최신순', icon: 'bi bi-clock' },
-    { value: 'popular', label: '인기순', icon: 'bi bi-fire' },
     { value: 'views', label: '조회순', icon: 'bi bi-eye' },
-    { value: 'comments', label: '댓글순', icon: 'bi bi-chat-dots' },
+    { value: 'likes', label: '좋아요순', icon: 'bi bi-fire' },
+    { value: 'answers', label: '댓글많은순', icon: 'bi bi-chat-dots' },
   ])
 
   // 선택된 카테고리
@@ -58,10 +57,13 @@ export function useBoard(apiEndpoint = '/api/posts') {
 
       // 쿼리 파라미터에서 값 가져오기
       if (route.query.page) params.append('page', route.query.page)
-      if (route.query.search) params.append('search', route.query.search)
+      if (route.query.searchKeyword) params.append('searchKeyword', route.query.searchKeyword)
       if (route.query.searchType) params.append('searchType', route.query.searchType)
-      if (route.query.sort) params.append('sort', route.query.sort)
-      if (route.query.category) params.append('category', route.query.category)
+      if (route.query.sortType) params.append('sortType', route.query.sortType)
+      if (route.query.filterType && route.query.filterValue) {
+        params.append('filterType', route.query.filterType)
+        params.append('filterValue', route.query.filterValue)
+      }
 
       // 현재 상태를 쿼리에서 업데이트
       updateStateFromQuery()
@@ -76,11 +78,6 @@ export function useBoard(apiEndpoint = '/api/posts') {
           Object.assign(pagination, response.data.pagination)
         }
 
-        // 카테고리 정보 (첫 로드시에만)
-        if (response.data.categories && categories.value.length === 0) {
-          categories.value = response.data.categories
-        }
-
         // 인기 게시글 (사이드바용)
         if (response.data.popularPosts) {
           popularPosts.value = response.data.popularPosts
@@ -91,11 +88,28 @@ export function useBoard(apiEndpoint = '/api/posts') {
           techStacks.value = response.data.techStacks
         }
       }
+
+      // 카테고리 정보 별도 로드 (첫 로드시에만)
+      if (categories.value.length === 0) {
+        await loadCategories()
+      }
     } catch (err) {
       error.value = err.response?.data?.message || '데이터를 불러오는데 실패했습니다.'
       console.error('Board data loading error:', err)
     } finally {
       isLoading.value = false
+    }
+  }
+
+  // 카테고리 로드
+  const loadCategories = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/categories`)
+      if (response.data && response.data.categories) {
+        categories.value = response.data.categories
+      }
+    } catch (err) {
+      console.error('Categories loading error:', err)
     }
   }
 
@@ -115,10 +129,16 @@ export function useBoard(apiEndpoint = '/api/posts') {
   // 쿼리에서 상태 업데이트
   const updateStateFromQuery = () => {
     pagination.currentPage = parseInt(route.query.page) || 1
-    searchForm.query = route.query.search || ''
+    searchForm.searchKeyword = route.query.searchKeyword || ''
     searchForm.searchType = route.query.searchType || 'title'
-    sortType.value = route.query.sort || 'recent'
-    selectedCategory.value = route.query.category || null
+    sortType.value = route.query.sortType || 'recent'
+
+    // filterType이 category인 경우 selectedCategory 설정
+    if (route.query.filterType === 'category' && route.query.filterValue) {
+      selectedCategory.value = route.query.filterValue
+    } else {
+      selectedCategory.value = null
+    }
   }
 
   // URL 쿼리 업데이트
@@ -127,10 +147,16 @@ export function useBoard(apiEndpoint = '/api/posts') {
 
     // 기본값이면 쿼리에서 제거
     if (query.page === 1) delete query.page
-    if (!query.search) delete query.search
-    if (query.searchType === 'title') delete query.searchType
-    if (query.sort === 'recent') delete query.sort
-    if (!query.category) delete query.category
+    if (!query.searchKeyword) {
+      delete query.searchKeyword
+      delete query.searchType
+    }
+    if (query.searchType === 'title' && !query.searchKeyword) delete query.searchType
+    if (query.sortType === 'recent') delete query.sortType
+    if (!query.filterValue) {
+      delete query.filterType
+      delete query.filterValue
+    }
 
     await router.push({ query })
   }
@@ -143,20 +169,33 @@ export function useBoard(apiEndpoint = '/api/posts') {
   // 검색 처리
   const handleSearch = async (searchData) => {
     await updateQuery({
-      search: searchData.query,
+      searchKeyword: searchData.searchKeyword,
       searchType: searchData.searchType,
       page: 1,
     })
   }
 
   // 정렬 변경
-  const handleSortChange = async (sort) => {
-    await updateQuery({ sort, page: 1 })
+  const handleSortChange = async (sortType) => {
+    await updateQuery({ sortType, page: 1 })
   }
 
   // 카테고리 필터
   const handleCategoryFilter = async (categoryId) => {
-    await updateQuery({ category: categoryId, page: 1 })
+    if (categoryId) {
+      await updateQuery({
+        filterType: 'category',
+        filterValue: categoryId,
+        page: 1
+      })
+    } else {
+      // 카테고리 필터 제거
+      await updateQuery({
+        filterType: null,
+        filterValue: null,
+        page: 1
+      })
+    }
   }
 
   // 기술 스택 필터 (프로젝트용)

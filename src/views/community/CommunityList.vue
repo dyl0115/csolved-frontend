@@ -5,7 +5,7 @@
     <BoardBanner
       :image-src="communityBannerImage"
       alt-text=""
-      title=""
+      title="커뮤니티"
       description=""
       variant="primary"
     />

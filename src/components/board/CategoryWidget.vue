@@ -4,24 +4,6 @@
       {{ config.title }}
     </div>
     <div class="p-4">
-      <!-- 전체 보기 옵션 -->
-      <div v-if="config.showAll" class="mb-3">
-        <button
-          @click="handleCategoryClick(null)"
-          class="w-full text-left px-3 py-2 rounded-lg transition-colors"
-          :class="
-            !selectedCategory
-              ? 'bg-blue-100 text-blue-800 border border-blue-300'
-              : 'hover:bg-gray-50 text-gray-700'
-          "
-        >
-          <i class="bi bi-list mr-2"></i>
-          전체 보기
-          <span v-if="totalCount" class="float-right text-sm text-gray-500">
-            {{ totalCount }}
-          </span>
-        </button>
-      </div>
 
       <!-- 카테고리 목록 -->
       <ul class="space-y-1">
@@ -82,7 +64,7 @@ const props = defineProps({
     type: Object,
     default: () => ({
       title: '카테고리',
-      showAll: true,
+      showAll: false,
       showPostCount: true,
       maxDisplay: 10
     })

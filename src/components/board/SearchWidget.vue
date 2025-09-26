@@ -20,7 +20,7 @@
 
           <!-- 검색창 -->
           <input
-            v-model="localSearchForm.query"
+            v-model="localSearchForm.searchKeyword"
             type="text"
             :placeholder="placeholder"
             class="flex-1 px-3 py-2 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -103,12 +103,12 @@ const localSearchForm = reactive({ ...props.searchForm })
 
 // 검색 가능 여부
 const canSearch = computed(() => {
-  return (localSearchForm.query || localSearchForm.searchKeyword || '').trim().length >= props.minLength
+  return (localSearchForm.searchKeyword || '').trim().length >= props.minLength
 })
 
 // 검색어가 있는지 확인
 const hasSearchValue = computed(() => {
-  return (localSearchForm.query || localSearchForm.searchKeyword || '').trim().length > 0
+  return (localSearchForm.searchKeyword || '').trim().length > 0
 })
 
 // 입력 필드 클래스
@@ -133,12 +133,7 @@ const handleSubmit = () => {
 
 // 검색 초기화
 const clearSearch = () => {
-  if (localSearchForm.query !== undefined) {
-    localSearchForm.query = ''
-  }
-  if (localSearchForm.searchKeyword !== undefined) {
-    localSearchForm.searchKeyword = ''
-  }
+  localSearchForm.searchKeyword = ''
   localSearchForm.searchType = props.searchOptions[0]?.value || 'title'
   emit('clear')
 }

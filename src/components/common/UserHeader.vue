@@ -15,7 +15,7 @@
         <!-- 데스크톱 내비게이션 -->
         <div class="hidden md:flex items-center space-x-8">
           <router-link
-            to="/notices?page=1"
+            to="/notice"
             class="text-white hover:text-blue-200 transition-colors font-medium"
           >
             공지사항
@@ -116,7 +116,7 @@
             Home
           </router-link>
           <router-link
-            to="/notices?page=1"
+            to="/notice"
             class="text-white hover:text-blue-200 transition-colors font-medium py-2"
             @click="closeMobileMenu"
           >
