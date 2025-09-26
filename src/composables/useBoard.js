@@ -1,5 +1,6 @@
 import { ref, reactive, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { API_BASE_URL, API_ENDPOINTS, RESPONSE_CODES } from '@/utils/constants'
 import axios from 'axios'
 
 export function useBoard(apiEndpoint = '/api/posts') {
@@ -65,9 +66,9 @@ export function useBoard(apiEndpoint = '/api/posts') {
       // 현재 상태를 쿼리에서 업데이트
       updateStateFromQuery()
 
-      const response = await axios.get(`http://localhost:8080${apiEndpoint}?${params}`)
+      const response = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.POST.LIST}?${params}`)
 
-      if (response.data.status === 200) {
+      if (response.data) {
         posts.value = response.data.posts || []
 
         // 페이지네이션 정보 업데이트

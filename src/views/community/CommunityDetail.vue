@@ -115,10 +115,12 @@ import {
   likeCommunityPost,
   bookmarkPost,
   removeBookmark,
+  hasBookmarked,
   createAnswer,
   deleteAnswer,
   createComment,
   deleteComment,
+  getAnswerList,
 } from '@/api/community'
 
 const route = useRoute()
@@ -174,8 +176,14 @@ const loadPostDetail = async () => {
     const result = await getCommunityPostDetail(route.params.postId)
     if (result.success) {
       post.value = result.data.post
-      answers.value = result.data.answers || []
-      bookmarked.value = result.data.bookmarked || false
+
+      // 북마크 여부 확인
+      const bookmarkResult = await hasBookmarked(route.params.postId)
+      if (bookmarkResult.success) {
+        bookmarked.value = bookmarkResult.data.bookmarked || false
+      } else {
+        bookmarked.value = false
+      }
     } else {
       alert('게시글을 불러올 수 없습니다.')
       router.push('/communities?page=1')
@@ -185,6 +193,20 @@ const loadPostDetail = async () => {
     alert('게시글을 불러오는 중 오류가 발생했습니다.')
   } finally {
     isLoading.value = false
+  }
+}
+
+// 답변 목록 로드
+const loadAnswerList = async () => {
+  try {
+    const result = await getAnswerList(route.params.postId)
+    if (result.success) {
+      answers.value = result.data.answers || []
+    } else {
+      console.error('답변 목록 로드 실패:', result.message)
+    }
+  } catch (error) {
+    console.error('답변 목록 로드 실패:', error)
   }
 }
 
@@ -267,7 +289,7 @@ const handleAnswerSubmit = async () => {
 
     if (result.success) {
       // 답변 목록 새로고침
-      await loadPostDetail()
+      await loadAnswerList()
       showAnswerForm.value = false
       answerForm.content = ''
       answerForm.anonymous = false
@@ -293,7 +315,7 @@ const handleAnswerDelete = async (answerId) => {
   try {
     const result = await deleteAnswer(answerId)
     if (result.success) {
-      await loadPostDetail()
+      await loadAnswerList()
     } else {
       alert(result.message || '댓글 삭제 중 오류가 발생했습니다.')
     }
@@ -334,7 +356,7 @@ const handleCommentSubmit = async (answerId) => {
     })
 
     if (result.success) {
-      await loadPostDetail()
+      await loadAnswerList()
       showCommentForm.value = null
       commentForm.content = ''
       commentForm.anonymous = false
@@ -356,7 +378,7 @@ const handleCommentDelete = async (commentId) => {
   try {
     const result = await deleteComment(commentId)
     if (result.success) {
-      await loadPostDetail()
+      await loadAnswerList()
     } else {
       alert(result.message || '댓글 삭제 중 오류가 발생했습니다.')
     }
@@ -405,8 +427,9 @@ const handleSearch = (searchData) => {
   })
 }
 
-onMounted(() => {
-  loadPostDetail()
+onMounted(async () => {
+  await loadPostDetail()
+  await loadAnswerList()
 })
 </script>
 

@@ -10,17 +10,32 @@ export const API_ENDPOINTS = {
     REFRESH: '/api/auth/refresh',
     CHECK_SESSION: '/api/auth/session',
   },
-  COMMUNITY: {
-    LIST: '/api/communities',
-    DETAIL: '/api/community',
-    CREATE: '/api/community',
-    UPDATE: '/api/community',
-    DELETE: '/api/community',
+
+  NOTICE: {
+    CREATE: `/api/notice`,
+    UPDATE: (noticeId) => `/api/notice/${noticeId}`,
+    DELETE: (noticeId) => `/api/notice/${noticeId}`,
+    LIST: `/api/notices`,
+    DETAIL: (noticeId) => `/api/notice/${noticeId}`,
+  },
+
+  POST: {
+    LIST: '/api/posts',
+    DETAIL: '/api/post',
+    CREATE: '/api/post',
+    UPDATE: '/api/post',
+    DELETE: '/api/post',
     CATEGORIES: '/api/categories',
+    REPLIED: '/api/post/replied',
+    WROTE: '/api/posts/wrote',
+    LIKE: {
+      ADD: (postId) => `/api/post/${postId}/like`,
+    },
 
     ANSWER: {
-      CREATE: '/api/community/answer',
-      DELETE: '/api/community/answer',
+      LIST: (postId) => `/api/post/${postId}/answers`,
+      CREATE: '/api/post/answer',
+      DELETE: (answerId) => `/api/post/answer/${answerId}`,
     },
 
     COMMENT: {
@@ -30,21 +45,14 @@ export const API_ENDPOINTS = {
 
     BOOKMARK: {
       // LIST: '/api/bookmarks',
-      ADD: '/api/bookmark',
-      REMOVE: '/api/bookmark',
-    },
-
-    LIKE: {
-      ADD: '/api/community/like',
+      ADD: (postId) => `/api/post/${postId}/bookmark`,
+      REMOVE: (postId) => `/api/post/${postId}/bookmark`,
+      STATUS: (postId) => `/api/post/${postId}/bookmark`,
+      LIST: '/api/bookmarks',
     },
   },
 
   USER: {
-    ACTIVITY: {
-      BOOKMARK: '/api/users/activities/bookmarks',
-      REPLIED_POST: '/api/users/activities/replied-posts',
-      POSTS: '/api/users/activities/posts',
-    },
     PROFILE: '/api/users/profile',
   },
 }
